@@ -4,7 +4,7 @@ import middlewares "github.com/DLzer/go-product-api/api/middleware"
 
 // initializeRoutes declares all routes used in the application
 func (s *Server) initializeRoutes() {
-
+	s.Router.Use(middlewares.APICallMiddleware)
 	// Home Route
 	s.Router.HandleFunc("/", middlewares.SetMiddlewareJSON(s.Home)).Methods("GET")
 

@@ -79,6 +79,8 @@ func (server *Server) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 func (server *Server) GetProduct(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
+	// Retrieve the api_call_id from the request context
+	apiCallID := r.Context().Value("api_call_id").(string)
 	uid, err := strconv.ParseUint(vars["id"], 10, 32)
 	if err != nil {
 		responses.ERROR(w, http.StatusBadRequest, err)
@@ -90,7 +92,7 @@ func (server *Server) GetProduct(w http.ResponseWriter, r *http.Request) {
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
 	}
-	responses.JSON(w, http.StatusOK, productGotten)
+	responses.JSON(w, http.StatusOK, productGotten, apiCallID)
 }
 
 // Get all products

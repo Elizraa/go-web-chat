@@ -16,7 +16,7 @@ type Product struct {
 
 // GetProduct will return a single product given a valid ID
 func (p *Product) GetProduct(db *gorm.DB, uid uint32) (*Product, error) {
-	err := db.Debug().Model(Product{}).Where("id = ?", uid).Take(&p).Error
+	err := db.Model(Product{}).Where("id = ?", uid).Take(&p).Error
 	if err != nil {
 		return &Product{}, err
 	}
