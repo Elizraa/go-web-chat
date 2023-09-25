@@ -11,4 +11,5 @@ require (
 	github.com/rs/zerolog v1.30.0
 	golang.org/x/crypto v0.0.0-20191205180655-e7c4368fe9dd
 	gopkg.in/go-playground/assert.v1 v1.2.1
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )

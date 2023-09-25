@@ -13,7 +13,7 @@ func JSON(w http.ResponseWriter, statusCode int, data interface{}, apiCallID ...
 	currenTime := time.Now().Format("2006-01-02 15:04:05")
 	// Include the apiCallID in the response data
 	responseData := map[string]interface{}{
-		"message_id":               apiCallID[0],
+		"message_id":               apiCallID,
 		"message_request_datetime": currenTime,
 		"message_data":             data, // Include the original data
 	}
