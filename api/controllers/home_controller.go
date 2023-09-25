@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/DLzer/go-product-api/api/responses"
+	"github.com/Elizraa/go-web-chat/api/responses"
 )
 
 // Home response

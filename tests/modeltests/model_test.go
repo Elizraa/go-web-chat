@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/DLzer/go-product-api/api/controllers"
-	"github.com/DLzer/go-product-api/api/models"
+	"github.com/Elizraa/go-web-chat/api/controllers"
+	"github.com/Elizraa/go-web-chat/api/models"
 	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
 )

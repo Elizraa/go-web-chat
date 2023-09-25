@@ -7,7 +7,7 @@
 
 ## Clone the repo
 ```bash
-$ git clone github.com/DLzer/go-product-api
+$ git clone github.com/Elizraa/go-web-chat
 ```
 
 ## Testing Database
@@ -50,7 +50,7 @@ The expected output should be:
 === RUN   TestDeleteProduct
 --- PASS: TestDeleteProduct (0.01s)
 PASS
-ok      github.com/DLzer/go-product-api       0.071s
+ok      github.com/Elizraa/go-web-chat       0.071s
 ```
 
 ## Deployment

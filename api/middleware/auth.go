@@ -3,11 +3,13 @@ package middlewares
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
-	"github.com/DLzer/go-product-api/api/responses"
-	"github.com/DLzer/go-product-api/api/utils" // Import utility functions for handling errors
+	"github.com/Elizraa/go-web-chat/api/responses"
+	"github.com/Elizraa/go-web-chat/api/utils" // Import utility functions for handling errors
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -26,10 +28,11 @@ func RequireTokenAuthentication(next http.HandlerFunc) http.HandlerFunc {
 			responses.ERROR(w, http.StatusUnauthorized, err)
 			return
 		}
+		fmt.Println(tokenString)
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			// You should provide the secret key used to sign the tokens here
-			return []byte("your-secret-key"), nil
+			return []byte(os.Getenv("SECRET_KEY")), nil
 		})
 		if err != nil {
 			responses.ERROR(w, http.StatusUnauthorized, err)

@@ -1,4 +1,4 @@
-module github.com/DLzer/go-product-api
+module github.com/Elizraa/go-web-chat
 
 go 1.15
 

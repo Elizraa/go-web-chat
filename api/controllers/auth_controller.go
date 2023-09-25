@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 
-	"github.com/DLzer/go-product-api/api/models"
-	"github.com/DLzer/go-product-api/api/responses"
-	"github.com/DLzer/go-product-api/api/utils"
+	"github.com/Elizraa/go-web-chat/api/models"
+	"github.com/Elizraa/go-web-chat/api/responses"
+	"github.com/Elizraa/go-web-chat/api/utils"
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -104,7 +105,7 @@ func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix() // Token expiration time (adjust as needed)
 
 	// Sign the token with your secret key
-	tokenString, err := token.SignedString([]byte("your-secret-key"))
+	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET_KEY")))
 	if err != nil {
 		err := utils.FormatError("Could not generate token")
 		responses.ERROR(w, http.StatusUnauthorized, err)

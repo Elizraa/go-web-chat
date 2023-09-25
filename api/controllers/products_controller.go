@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/DLzer/go-product-api/api/models"
-	"github.com/DLzer/go-product-api/api/responses"
+	"github.com/Elizraa/go-web-chat/api/models"
+	"github.com/Elizraa/go-web-chat/api/responses"
 	"github.com/gorilla/mux"
 )
 
