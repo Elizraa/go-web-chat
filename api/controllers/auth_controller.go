@@ -8,8 +8,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/Elizraa/go-web-chat/api/core/responses"
 	"github.com/Elizraa/go-web-chat/api/models"
-	"github.com/Elizraa/go-web-chat/api/responses"
 	"github.com/Elizraa/go-web-chat/api/utils"
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
@@ -62,8 +62,8 @@ func (server *Server) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, userCreated.ID))
-	responses.JSON(w, http.StatusCreated, userCreated)
-
+	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
+	myResponse.WriteToResponse(w, http.StatusCreated, userCreated)
 }
 
 // LoginResponse represents the JSON response for successful login
@@ -117,5 +117,6 @@ func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
 		AccessToken: tokenString,
 	}
 
-	responses.JSON(w, http.StatusOK, response)
+	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
+	myResponse.WriteToResponse(w, http.StatusOK, response)
 }

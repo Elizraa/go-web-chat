@@ -7,14 +7,13 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Elizraa/go-web-chat/api/core/responses"
 	"github.com/Elizraa/go-web-chat/api/models"
-	"github.com/Elizraa/go-web-chat/api/responses"
 	"github.com/gorilla/mux"
 )
 
 // Create a single product
 func (server *Server) CreateProduct(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		responses.ERROR(w, http.StatusUnprocessableEntity, err)
@@ -40,7 +39,8 @@ func (server *Server) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, productCreated.ID))
-	responses.JSON(w, http.StatusCreated, productCreated)
+	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
+	myResponse.WriteToResponse(w, http.StatusCreated, productCreated)
 }
 
 func (server *Server) UpdateProduct(w http.ResponseWriter, r *http.Request) {
@@ -71,16 +71,20 @@ func (server *Server) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, productUpdated.ID))
-	responses.JSON(w, http.StatusCreated, productUpdated)
+	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
+	myResponse.WriteToResponse(w, http.StatusCreated, productUpdated)
 
 }
 
 // Get a single product
 func (server *Server) GetProduct(w http.ResponseWriter, r *http.Request) {
+	// Get the request and response objects from the context
+	// myRequest := r.Context().Value("myRequest").(*requests.MyRequest)
+	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
 
 	vars := mux.Vars(r)
 	// Retrieve the api_call_id from the request context
-	apiCallID := r.Context().Value("api_call_id").(string)
+	// apiCallID := r.Context().Value("api_call_id").(string)
 	uid, err := strconv.ParseUint(vars["id"], 10, 32)
 	if err != nil {
 		responses.ERROR(w, http.StatusBadRequest, err)
@@ -92,7 +96,7 @@ func (server *Server) GetProduct(w http.ResponseWriter, r *http.Request) {
 		responses.ERROR(w, http.StatusBadRequest, err)
 		return
 	}
-	responses.JSON(w, http.StatusOK, productGotten, apiCallID)
+	myResponse.WriteToResponse(w, http.StatusOK, productGotten)
 }
 
 // Get all products
@@ -105,7 +109,9 @@ func (server *Server) FindAllProducts(w http.ResponseWriter, r *http.Request) {
 		responses.ERROR(w, http.StatusInternalServerError, err)
 		return
 	}
-	responses.JSON(w, http.StatusOK, products)
+	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
+	myResponse.WriteToResponse(w, http.StatusOK, products)
+
 }
 
 // Delete a single product
@@ -127,5 +133,6 @@ func (server *Server) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Entity", fmt.Sprintf("%d", uid))
-	responses.JSON(w, http.StatusNoContent, "")
+	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
+	myResponse.WriteToResponse(w, http.StatusNoContent, "")
 }

@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Elizraa/go-web-chat/api/responses"
+	"github.com/Elizraa/go-web-chat/api/core/responses"
 	"github.com/Elizraa/go-web-chat/api/utils" // Import utility functions for handling errors
 
 	"github.com/dgrijalva/jwt-go"
