@@ -15,31 +15,31 @@ import (
 // Create a single product
 func (server *Server) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
+	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
 	if err != nil {
-		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err)
 	}
 	product := models.Product{}
 	err = json.Unmarshal(body, &product)
 	if err != nil {
-		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 
 	err = product.Validate("")
 	if err != nil {
-		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 	fmt.Println(product)
 
 	productCreated, err := product.CreateProduct(server.DB)
 	if err != nil {
-		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, productCreated.ID))
-	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
 	myResponse.WriteToResponse(w, http.StatusCreated, productCreated)
 }
 
@@ -47,31 +47,32 @@ func (server *Server) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	uid, err := strconv.ParseUint(vars["id"], 10, 32)
 	body, err := ioutil.ReadAll(r.Body)
+	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
+
 	if err != nil {
-		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err)
 	}
 	product := models.Product{}
 	err = json.Unmarshal(body, &product)
 
 	if err != nil {
-		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 
 	err = product.Validate("")
 	if err != nil {
-		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 
 	productUpdated, err := product.UpdateProduct(server.DB, uint32(uid))
 	if err != nil {
-		responses.ERROR(w, http.StatusUnprocessableEntity, err)
+		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 
 	w.Header().Set("Location", fmt.Sprintf("%s%s/%d", r.Host, r.RequestURI, productUpdated.ID))
-	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
 	myResponse.WriteToResponse(w, http.StatusCreated, productUpdated)
 
 }
@@ -87,13 +88,13 @@ func (server *Server) GetProduct(w http.ResponseWriter, r *http.Request) {
 	// apiCallID := r.Context().Value("api_call_id").(string)
 	uid, err := strconv.ParseUint(vars["id"], 10, 32)
 	if err != nil {
-		responses.ERROR(w, http.StatusBadRequest, err)
+		myResponse.WriteToResponse(w, http.StatusBadRequest, err)
 		return
 	}
 	product := models.Product{}
 	productGotten, err := product.GetProduct(server.DB, uint32(uid))
 	if err != nil {
-		responses.ERROR(w, http.StatusBadRequest, err)
+		myResponse.WriteToResponse(w, http.StatusBadRequest, err)
 		return
 	}
 	myResponse.WriteToResponse(w, http.StatusOK, productGotten)
@@ -101,21 +102,22 @@ func (server *Server) GetProduct(w http.ResponseWriter, r *http.Request) {
 
 // Get all products
 func (server *Server) FindAllProducts(w http.ResponseWriter, r *http.Request) {
+	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
 
 	product := models.Product{}
 
 	products, err := product.FindAllProducts(server.DB)
 	if err != nil {
-		responses.ERROR(w, http.StatusInternalServerError, err)
+		myResponse.WriteToResponse(w, http.StatusInternalServerError, err)
 		return
 	}
-	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
 	myResponse.WriteToResponse(w, http.StatusOK, products)
 
 }
 
 // Delete a single product
 func (server *Server) DeleteProduct(w http.ResponseWriter, r *http.Request) {
+	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
 
 	vars := mux.Vars(r)
 
@@ -123,16 +125,15 @@ func (server *Server) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 
 	uid, err := strconv.ParseUint(vars["id"], 10, 32)
 	if err != nil {
-		responses.ERROR(w, http.StatusBadRequest, err)
+		myResponse.WriteToResponse(w, http.StatusBadRequest, err)
 		return
 	}
 
 	_, err = product.DeleteProduct(server.DB, uint32(uid))
 	if err != nil {
-		responses.ERROR(w, http.StatusInternalServerError, err)
+		myResponse.WriteToResponse(w, http.StatusInternalServerError, err)
 		return
 	}
 	w.Header().Set("Entity", fmt.Sprintf("%d", uid))
-	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
 	myResponse.WriteToResponse(w, http.StatusNoContent, "")
 }
