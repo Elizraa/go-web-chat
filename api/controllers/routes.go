@@ -4,8 +4,10 @@ import middlewares "github.com/Elizraa/go-web-chat/api/middleware"
 
 // initializeRoutes declares all routes used in the application
 func (s *Server) initializeRoutes() {
-	s.Router.Use(middlewares.APICallMiddleware)
-	s.Router.Use(middlewares.MiddlewareJSON)
+	// s.Router.Use(middlewares.APICallMiddleware)
+	// Use the middleware for all routes
+	s.Router.Use(middlewares.RequestResponseMiddleware)
+	// s.Router.Use(middlewares.MiddlewareJSON)
 
 	s.Router.HandleFunc("/", s.Home).Methods("GET")
 	SetupProductRoutes(s)

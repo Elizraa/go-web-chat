@@ -3,20 +3,21 @@ package middlewares
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
 
-	"github.com/Elizraa/go-web-chat/api/responses"
-	"github.com/Elizraa/go-web-chat/api/utils" // Import utility functions for handling errors
-
+	"github.com/Elizraa/go-web-chat/api/core/responses"
+	// Import utility functions for handling errors
 	"github.com/dgrijalva/jwt-go"
 )
 
 func RequireTokenAuthentication(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		tokenString := r.Header.Get("Authorization")
+
+		myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
+
 		// Check if the tokenString starts with "Bearer "
 		if strings.HasPrefix(tokenString, "Bearer ") {
 			// Remove the "Bearer " prefix
@@ -24,30 +25,25 @@ func RequireTokenAuthentication(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		if tokenString == "" {
-			err := utils.FormatError("Authorization token is required")
-			responses.ERROR(w, http.StatusUnauthorized, err)
+			myResponse.WriteToResponse(w, http.StatusUnauthorized, "Authorization token is required")
 			return
 		}
-		fmt.Println(tokenString)
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			// You should provide the secret key used to sign the tokens here
 			return []byte(os.Getenv("SECRET_KEY")), nil
 		})
 		if err != nil {
-			responses.ERROR(w, http.StatusUnauthorized, err)
+			myResponse.WriteToResponse(w, http.StatusUnauthorized, err)
 			return
 		}
 		if !token.Valid {
-			err := utils.FormatError("Invald or expired token")
-			responses.ERROR(w, http.StatusUnauthorized, err)
+			myResponse.WriteToResponse(w, http.StatusUnauthorized, "Invald or expired token")
 			return
 		}
 
-		// You can access the user claims here if needed
 		claims, _ := token.Claims.(jwt.MapClaims)
 
-		// Store the user information in the request context for use in your handlers
+		// Store the user information in the request context for use in handlers
 		r = r.WithContext(context.WithValue(r.Context(), "user", claims))
 		next(w, r)
 	}
