@@ -18,27 +18,27 @@ import (
 func (server *Server) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	// // Parse the JSON request body into the user struct
 	// if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-	// 	myResponse.WriteToResponse(w, http.StatusBadRequest, err)
+	// 	myResponse.WriteToResponse(w, http.StatusBadRequest, err.Error())
 	// 	return
 	// }
 	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err)
+		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err.Error())
 	}
 	user := models.User{}
 	err = json.Unmarshal(body, &user)
 	if err != nil {
-		fmt.Println("err", err)
+		fmt.Println("err", err.Error())
 
-		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err)
+		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
 	err = user.Validate("")
 	if err != nil {
-		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err)
+		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 	// Validate user input (e.g., check for required fields)
@@ -46,14 +46,14 @@ func (server *Server) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	// Hash the user's password before saving it to the database
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		myResponse.WriteToResponse(w, http.StatusInternalServerError, err)
+		myResponse.WriteToResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	user.Password = string(hashedPassword)
 
 	userCreated, err := user.CreateUser(server.DB)
 	if err != nil {
-		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err)
+		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
@@ -72,13 +72,13 @@ func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
 	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
 
 	if err != nil {
-		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err)
+		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err.Error())
 	}
 	err = json.Unmarshal(body, &user)
 	if err != nil {
-		fmt.Println("err", err)
+		fmt.Println("err", err.Error())
 
-		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err)
+		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
@@ -88,7 +88,7 @@ func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
 	authenticatedUser, err := user.AuthenticateUser(server.DB, user.Email, user.Password)
 	if err != nil {
 		err := utils.FormatError("Invald email or password")
-		myResponse.WriteToResponse(w, http.StatusUnauthorized, err)
+		myResponse.WriteToResponse(w, http.StatusUnauthorized, err.Error())
 		return
 	}
 
@@ -105,7 +105,7 @@ func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
 	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET_KEY")))
 	if err != nil {
 		err := utils.FormatError("Could not generate token")
-		myResponse.WriteToResponse(w, http.StatusUnauthorized, err)
+		myResponse.WriteToResponse(w, http.StatusUnauthorized, err.Error())
 		return
 	}
 

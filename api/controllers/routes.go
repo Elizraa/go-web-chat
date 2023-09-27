@@ -19,6 +19,7 @@ func SetupProductRoutes(s *Server) {
 	productRouter := s.Router.PathPrefix("/product").Subrouter()
 	productRouter.HandleFunc("", s.FindAllProducts).Methods("GET")
 	productRouter.HandleFunc("", middlewares.RequireTokenAuthentication(s.CreateProduct)).Methods("POST")
+	productRouter.HandleFunc("/own", middlewares.RequireTokenAuthentication(s.GetProductByUser)).Methods("GET")
 	productRouter.HandleFunc("/{id:[0-9]+}", s.GetProduct).Methods("GET")
 	productRouter.HandleFunc("/{id:[0-9]+}", s.UpdateProduct).Methods("PUT")
 	productRouter.HandleFunc("/{id:[0-9]+}", s.DeleteProduct).Methods("DELETE")

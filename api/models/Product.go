@@ -8,9 +8,10 @@ import (
 
 // Product Interface
 type Product struct {
-	ID    uint32  `gorm:"primary_key;auto_increment" json:"id"`
-	Name  string  `gorm:"size:255;not null;" json:"name"`
-	Price float64 `json:"price"`
+	ID     uint32  `gorm:"primary_key;auto_increment" json:"id"`
+	Name   string  `gorm:"size:255;not null;" json:"name"`
+	Price  float64 `json:"price"`
+	UserID uint32  `gorm:"not null;ForeignKey:UserID" json:"user_id"`
 	BaseModel
 }
 
@@ -25,6 +26,19 @@ func (p *Product) GetProduct(db *gorm.DB, uid uint32) (*Product, error) {
 	}
 
 	return p, err
+}
+
+func (p *Product) GetProductByUser(db *gorm.DB, user_id uint32) (*[]Product, error) {
+	products := []Product{}
+	err := db.Model(Product{}).Where("user_id = ?", user_id).Find(&products).Error
+	if err != nil {
+		return &products, err
+	}
+	if gorm.IsRecordNotFoundError(err) {
+		return &products, errors.New("Product Not Found")
+	}
+
+	return &products, err
 }
 
 // updateProduct will update an individual product row given a valid ID
