@@ -1,8 +1,6 @@
 package seed
 
 import (
-	"log"
-
 	"github.com/Elizraa/go-web-chat/api/models"
 	"github.com/jinzhu/gorm"
 )
@@ -13,7 +11,15 @@ var product = models.Product{
 }
 
 func Load(db *gorm.DB) {
-	// err := db.Debug().DropTableIfExists(&models.Product{}, &models.Product{}).Error
+	// err := db.Debug().DropTableIfExists(&models.User{}, &models.User{}).Error
+	// if err != nil {
+	// 	log.Fatalf("cannot drop table: %v", err)
+	// }
+	// err = db.Debug().AutoMigrate(&models.User{}, &models.User{}).Error
+	// if err != nil {
+	// 	log.Fatalf("cannot migrate table: %v", err)
+	// }
+	// err = db.Debug().DropTableIfExists(&models.Product{}, &models.Product{}).Error
 	// if err != nil {
 	// 	log.Fatalf("cannot drop table: %v", err)
 	// }
@@ -21,14 +27,9 @@ func Load(db *gorm.DB) {
 	// if err != nil {
 	// 	log.Fatalf("cannot migrate table: %v", err)
 	// }
-	// err = db.Debug().Model(&models.Product{}).Create(&product).Error
-	// if err != nil {
-	// 	log.Fatalf("cannot seed scan table: %v", err)
-	// }
-
-	err := db.Debug().AutoMigrate(&models.User{}, &models.User{}).Error
-	if err != nil {
-		log.Fatalf("cannot migrate table: %v", err)
-	}
+	// 	// err = db.Debug().Model(&models.Product{}).Create(&product).Error
+	// 	// if err != nil {
+	// 	// 	log.Fatalf("cannot seed scan table: %v", err)
+	// 	// }
 
 }

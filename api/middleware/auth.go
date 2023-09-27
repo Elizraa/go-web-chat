@@ -33,7 +33,7 @@ func RequireTokenAuthentication(next http.HandlerFunc) http.HandlerFunc {
 			return []byte(os.Getenv("SECRET_KEY")), nil
 		})
 		if err != nil {
-			myResponse.WriteToResponse(w, http.StatusUnauthorized, err)
+			myResponse.WriteToResponse(w, http.StatusUnauthorized, err.Error())
 			return
 		}
 		if !token.Valid {
