@@ -15,8 +15,13 @@ import (
 
 // Create a single product
 func (server *Server) CreateProduct(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
 	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
+	defer func() {
+		if r := recover(); r != nil {
+			myResponse.WriteToResponse(w, http.StatusInternalServerError, r)
+		}
+	}()
+	body, err := ioutil.ReadAll(r.Body)
 	userClaims, _ := r.Context().Value("user").(jwt.MapClaims)
 	if err != nil {
 		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err.Error())
@@ -47,11 +52,15 @@ func (server *Server) CreateProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (server *Server) UpdateProduct(w http.ResponseWriter, r *http.Request) {
+	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
+	defer func() {
+		if r := recover(); r != nil {
+			myResponse.WriteToResponse(w, http.StatusInternalServerError, r)
+		}
+	}()
 	vars := mux.Vars(r)
 	uid, err := strconv.ParseUint(vars["id"], 10, 32)
 	body, err := ioutil.ReadAll(r.Body)
-	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
-
 	if err != nil {
 		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err.Error())
 	}
@@ -68,7 +77,18 @@ func (server *Server) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
+	userClaims, _ := r.Context().Value("user").(jwt.MapClaims)
+	userID := uint32(userClaims["user_id"].(float64))
 
+	productGotten, err := product.GetProduct(server.DB, uint32(uid))
+	if err != nil {
+		myResponse.WriteToResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	if productGotten.UserID != userID {
+		myResponse.WriteToResponse(w, http.StatusUnauthorized, "Not the owner of the product")
+		return
+	}
 	productUpdated, err := product.UpdateProduct(server.DB, uint32(uid))
 	if err != nil {
 		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err.Error())
@@ -83,7 +103,11 @@ func (server *Server) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 // Get a single product
 func (server *Server) GetProduct(w http.ResponseWriter, r *http.Request) {
 	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
-
+	defer func() {
+		if r := recover(); r != nil {
+			myResponse.WriteToResponse(w, http.StatusInternalServerError, r)
+		}
+	}()
 	vars := mux.Vars(r)
 	uid, err := strconv.ParseUint(vars["id"], 10, 32)
 	if err != nil {
@@ -102,7 +126,11 @@ func (server *Server) GetProduct(w http.ResponseWriter, r *http.Request) {
 // Get all products
 func (server *Server) FindAllProducts(w http.ResponseWriter, r *http.Request) {
 	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
-
+	defer func() {
+		if r := recover(); r != nil {
+			myResponse.WriteToResponse(w, http.StatusInternalServerError, r)
+		}
+	}()
 	product := models.Product{}
 
 	products, err := product.FindAllProducts(server.DB)
@@ -117,7 +145,11 @@ func (server *Server) FindAllProducts(w http.ResponseWriter, r *http.Request) {
 // Delete a single product
 func (server *Server) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
-
+	defer func() {
+		if r := recover(); r != nil {
+			myResponse.WriteToResponse(w, http.StatusInternalServerError, r)
+		}
+	}()
 	vars := mux.Vars(r)
 
 	product := models.Product{}
@@ -140,6 +172,12 @@ func (server *Server) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 // Get all product by user
 func (server *Server) GetProductByUser(w http.ResponseWriter, r *http.Request) {
 	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
+	defer func() {
+		if r := recover(); r != nil {
+			myResponse.WriteToResponse(w, http.StatusInternalServerError, r)
+		}
+	}()
+
 	userClaims, _ := r.Context().Value("user").(jwt.MapClaims)
 	userID := uint32(userClaims["user_id"].(float64))
 

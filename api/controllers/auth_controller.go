@@ -16,13 +16,12 @@ import (
 )
 
 func (server *Server) RegisterUser(w http.ResponseWriter, r *http.Request) {
-	// // Parse the JSON request body into the user struct
-	// if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-	// 	myResponse.WriteToResponse(w, http.StatusBadRequest, err.Error())
-	// 	return
-	// }
 	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
-
+	defer func() {
+		if r := recover(); r != nil {
+			myResponse.WriteToResponse(w, http.StatusInternalServerError, r)
+		}
+	}()
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err.Error())
@@ -67,10 +66,14 @@ type LoginResponse struct {
 }
 
 func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
+	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
+	defer func() {
+		if r := recover(); r != nil {
+			myResponse.WriteToResponse(w, http.StatusInternalServerError, r)
+		}
+	}()
 	user := models.User{}
 	body, err := ioutil.ReadAll(r.Body)
-	myResponse := r.Context().Value("myResponse").(*responses.MyResponse)
-
 	if err != nil {
 		myResponse.WriteToResponse(w, http.StatusUnprocessableEntity, err.Error())
 	}

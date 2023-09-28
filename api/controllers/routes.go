@@ -21,7 +21,7 @@ func SetupProductRoutes(s *Server) {
 	productRouter.HandleFunc("", middlewares.RequireTokenAuthentication(s.CreateProduct)).Methods("POST")
 	productRouter.HandleFunc("/own", middlewares.RequireTokenAuthentication(s.GetProductByUser)).Methods("GET")
 	productRouter.HandleFunc("/{id:[0-9]+}", s.GetProduct).Methods("GET")
-	productRouter.HandleFunc("/{id:[0-9]+}", s.UpdateProduct).Methods("PUT")
+	productRouter.HandleFunc("/{id:[0-9]+}", middlewares.RequireTokenAuthentication(s.UpdateProduct)).Methods("PUT")
 	productRouter.HandleFunc("/{id:[0-9]+}", s.DeleteProduct).Methods("DELETE")
 }
 
