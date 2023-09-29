@@ -10,7 +10,6 @@ import (
 
 	"github.com/Elizraa/go-web-chat/api/core/responses"
 	"github.com/Elizraa/go-web-chat/api/models"
-	"github.com/Elizraa/go-web-chat/api/utils"
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -90,7 +89,6 @@ func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
 	// Here, we assume you have a function `authenticateUser` that returns a user if authentication is successful
 	authenticatedUser, err := user.AuthenticateUser(server.DB, user.Email, user.Password)
 	if err != nil {
-		err := utils.FormatError("Invald email or password")
 		myResponse.WriteToResponse(w, http.StatusUnauthorized, err.Error())
 		return
 	}
@@ -107,7 +105,6 @@ func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
 	// Sign the token with your secret key
 	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET_KEY")))
 	if err != nil {
-		err := utils.FormatError("Could not generate token")
 		myResponse.WriteToResponse(w, http.StatusUnauthorized, err.Error())
 		return
 	}
