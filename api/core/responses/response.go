@@ -62,6 +62,12 @@ func (r *MyResponse) WriteToResponse(w http.ResponseWriter, statusCode int, resp
 		r.MessageData = responseData
 	}
 
+	if statusCode >= 200 && statusCode < 300 {
+		r.MessageDesc = "Request successfully processed"
+	} else {
+		r.MessageDesc = "Failed request, please try again later"
+	}
+
 	// Construct a new response dictionary
 	response := map[string]interface{}{
 		"message_id":               r.MessageID,

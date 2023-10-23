@@ -11,6 +11,7 @@ import (
 	"github.com/Elizraa/go-web-chat/api/core/responses"
 	"github.com/Elizraa/go-web-chat/api/models"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -89,6 +90,10 @@ func (server *Server) Login(w http.ResponseWriter, r *http.Request) {
 	// Here, we assume you have a function `authenticateUser` that returns a user if authentication is successful
 	authenticatedUser, err := user.AuthenticateUser(server.DB, user.Email, user.Password)
 	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			myResponse.WriteToResponse(w, http.StatusUnauthorized, "AUTHENTICATION FAILED")
+			return
+		}
 		myResponse.WriteToResponse(w, http.StatusUnauthorized, err.Error())
 		return
 	}
