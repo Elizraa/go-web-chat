@@ -1,0 +1,20 @@
+{
+  "name": "chitchat",
+  "version": "0.2.0",
+  "description": "real-time chat application",
+  "main": "js/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elizraa/chitchat.git"
+  },
+  "author": "David Schott",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^4.3.1",
+    "jquery": "^3.5.1",
+    "popper.js": "^1.14.7"
+  }
+}
