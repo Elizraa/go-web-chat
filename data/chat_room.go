@@ -17,18 +17,23 @@ const (
 	HiddenRoom = "hidden"
 )
 
+// Database model
+type ChatRoomDB struct {
+	Title       string    `json:"title"`
+	Description string    `json:"description,omitempty"`
+	Type        string    `json:"visibility"`
+	Password    string    `json:"password,omitempty"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+	ID          int       `json:"id"`
+}
+
 // ChatRoom is a struct representing a chat room
 // TODO:  Add Administrator
 type ChatRoom struct {
-	Title       string             `json:"title"`
-	Description string             `json:"description,omitempty"`
-	Type        string             `json:"visibility"`
-	Password    string             `json:"password,omitempty"`
-	CreatedAt   time.Time          `json:"createdAt"`
-	UpdatedAt   time.Time          `json:"updatedAt"`
-	ID          int                `json:"id"`
-	Broker      *Broker            `json:"-"`
-	Clients     map[string]*Client `json:"-"`
+	ChatRoomDB
+	Broker  *Broker            `json:"-"`
+	Clients map[string]*Client `json:"-"`
 }
 
 // ToJSON marshals a ChatRoom object in a JSON encoding that can be returned to users
@@ -52,7 +57,7 @@ func (cr ChatRoom) ToJSON() (jsonEncoding []byte, err error) {
 	return jsonEncoding, err
 }
 
-//AddClient will add a user to a ChatRoom
+// AddClient will add a user to a ChatRoom
 func (cr ChatRoom) AddClient(c *Client) (err error) {
 	if cr.clientExists(c.Username) {
 		return &APIError{

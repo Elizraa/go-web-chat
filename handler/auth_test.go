@@ -119,7 +119,13 @@ func TestRenewToken(t *testing.T) {
 func setJWTHeaders(t *testing.T, r *http.Request, id string, intendedValidity bool) {
 	t.Helper()
 	cr, _ := data.CS.Retrieve(id)
-	var myCr *data.ChatRoom = &data.ChatRoom{Password: cr.Password, ID: cr.ID, Title: cr.Title}
+	var myCr *data.ChatRoom = &data.ChatRoom{
+		ChatRoomDB: data.ChatRoomDB{
+			Password: cr.ChatRoomDB.Password,
+			ID:       cr.ChatRoomDB.ID,
+			Title:    cr.ChatRoomDB.Title,
+		},
+	}
 	if !intendedValidity {
 		myCr.Password = "bogus_incorrect_password"
 	}

@@ -27,17 +27,21 @@ func TestMain(m *testing.M) {
 func setUp() {
 	router = Mux
 	if err := data.CS.Add(&data.ChatRoom{
-		Title:       "Hidden Chat",
-		Description: "This is the hidden chat!",
-		Type:        "hidden",
-		Password:    "123abc123abc",
+		ChatRoomDB: data.ChatRoomDB{
+			Title:       "Hidden Chat",
+			Description: "This is the hidden chat!",
+			Type:        "hidden",
+			Password:    "123abc123abc",
+		},
 	}); err != nil {
 		Danger("Error setting up tests", err.Error())
 	}
 	if err := data.CS.Add(&data.ChatRoom{
-		Title:       "Public Test Chat",
-		Description: "This is the public chat!",
-		Type:        "public",
+		ChatRoomDB: data.ChatRoomDB{
+			Title:       "Public Test Chat",
+			Description: "This is the public chat!",
+			Type:        "public",
+		},
 	}); err != nil {
 		Danger("Error setting up tests", err.Error())
 	}

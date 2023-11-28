@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/elizraa/chitchat/data"
 	"github.com/gorilla/mux"
 )
 
@@ -72,7 +71,7 @@ func init() {
 	loadEnvs()
 	loadLog()
 	// initialize chat server
-	data.CS.Init()
+	// data.CS.Init()
 	Mux = registerHandlers()
 }
 

@@ -26,7 +26,7 @@ var CS ChatServer = ChatServer{
 
 // Init will initialize the ChatServer with the default public room.
 func (cs ChatServer) Init() {
-	CS.push(&ChatRoom{
+	dbModel := &ChatRoomDB{
 		Title:       "Public Chat",
 		Description: "This is the default chat, available to everyone!",
 		Type:        "public",
@@ -34,8 +34,12 @@ func (cs ChatServer) Init() {
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 		ID:          1,
-		Broker:      newBroker(1),
-		Clients:     make(map[string]*Client),
+	}
+
+	CS.push(&ChatRoom{
+		ChatRoomDB: *dbModel,
+		Broker:     newBroker(1),
+		Clients:    make(map[string]*Client),
 	})
 }
 

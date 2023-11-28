@@ -2,20 +2,36 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/elizraa/chitchat/handler"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+
+	if _, err := os.Stat(".env"); err == nil {
+		err = godotenv.Load()
+		if err != nil {
+			log.Printf("Error getting env, not coming through %v", err)
+		} else {
+			fmt.Println("env values loaded")
+		}
+	} else if os.IsNotExist(err) {
+		fmt.Println(".env file does not exist. Continuing without loading environment variables.")
+	} else {
+		log.Printf("Error checking .env file: %v", err)
+	}
+
 	address := handler.Config.Address
 	// If port env var is set, PaaS platform (Heroku) is being used
 	if port, ok := os.LookupEnv("PORT"); ok {
 		address = "0.0.0.0:" + port
 	}
-
+	InitDB(os.Getenv("DB_DRIVER"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_PORT"), os.Getenv("DB_HOST"), os.Getenv("DB_NAME"))
 	// starting up the server
 	server := &http.Server{
 		Addr:           address,
