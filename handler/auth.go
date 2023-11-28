@@ -16,7 +16,7 @@ var secretKey string = "my_secret_random_key_>_than_24_characters"
 
 // Add authorization
 // POST /chats/{titleOrID}/token
-func login(w http.ResponseWriter, r *http.Request) (err error) {
+func login(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 	w.Header().Set("Content-Type", "application/json")
 	// read in request
 	len := r.ContentLength
@@ -37,7 +37,7 @@ func login(w http.ResponseWriter, r *http.Request) (err error) {
 		}
 		if cr.Type == data.PublicRoom {
 			// Ignore public room
-			ReportStatus(w, true, nil)
+			ReportStatus(w, true, nil, ctxId)
 		} else if cr.MatchesPassword(c.Password) {
 			if c.User == "" {
 				return &data.APIError{
@@ -79,7 +79,7 @@ func login(w http.ResponseWriter, r *http.Request) (err error) {
 
 // Refreshes tokens before they expire
 // GET /chats/{titleOrID}/token/renew
-func renewToken(w http.ResponseWriter, r *http.Request) (err error) {
+func renewToken(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 	w.Header().Set("Content-Type", "application/json")
 	queries := mux.Vars(r)
 	if titleOrID, ok := queries["titleOrID"]; ok {
@@ -90,7 +90,7 @@ func renewToken(w http.ResponseWriter, r *http.Request) (err error) {
 		}
 		if cr.Type == data.PublicRoom {
 			// Ignore public room
-			ReportStatus(w, true, nil)
+			ReportStatus(w, true, nil, ctxId)
 		} else {
 			// Check authorization header
 			// Get the JWT string from the header
@@ -133,11 +133,11 @@ func renewToken(w http.ResponseWriter, r *http.Request) (err error) {
 
 // authorize will call the handler if authorization bearer token is valid. Otherwise, it will send a failed outcome
 func authorize(h errHandler) errHandler {
-	return func(w http.ResponseWriter, r *http.Request) (err error) {
+	return func(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 		// Skip authorization for special case of GET /chats/<id> for now
 		// TODO: Rewrite client-side app to request token before GET chat room
 		if name := runtime.FuncForPC(reflect.ValueOf(h).Pointer()).Name(); strings.HasSuffix(name, "handleRoom") && r.Method == http.MethodGet {
-			return h(w, r)
+			return h(w, r, ctxId)
 		}
 		queries := mux.Vars(r)
 		if titleOrID, ok := queries["titleOrID"]; ok {
@@ -164,7 +164,7 @@ func authorize(h errHandler) errHandler {
 			}
 
 			// Success, call h(w,r)
-			return h(w, r)
+			return h(w, r, ctxId)
 		}
 		return
 	}

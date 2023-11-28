@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -82,9 +83,13 @@ func loadLog() {
 		if err != nil {
 			log.Fatalln("Failed to open log file", err)
 		}
-
 	}
-	logger = log.New(file, "INFO ", log.Ldate|log.Ltime|log.Lshortfile)
+
+	// Create a MultiWriter that writes to both the file and os.Stdout
+	multiWriter := io.MultiWriter(file, os.Stdout)
+
+	// Use the MultiWriter as the output for the logger
+	logger = log.New(multiWriter, "INFO ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
 func loadConfig() {

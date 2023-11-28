@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 
 	"github.com/elizraa/chitchat/data"
@@ -9,7 +10,7 @@ import (
 )
 
 // main handler function
-func handleRoom(w http.ResponseWriter, r *http.Request) (err error) {
+func handleRoom(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 	queries := mux.Vars(r)
 	w.Header().Set("Content-Type", "application/json")
 	if titleOrID, ok := queries["titleOrID"]; ok {
@@ -26,7 +27,7 @@ func handleRoom(w http.ResponseWriter, r *http.Request) (err error) {
 			err = (handlePut(w, r, cr, titleOrID))
 			return err
 		case "DELETE":
-			err = handleDelete(w, r, cr)
+			err = handleDelete(w, r, cr, ctxId)
 			return err
 		}
 	} else {
@@ -54,14 +55,15 @@ func handleGet(w http.ResponseWriter, r *http.Request, cr *data.ChatRoom) (err e
 
 // Create a ChatRoom
 // POST /chats
-func handlePost(w http.ResponseWriter, r *http.Request) (err error) {
+func handlePost(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 	w.Header().Set("Content-Type", "application/json")
-	// read in request
-	len := r.ContentLength
-	body := make([]byte, len)
-	if _, err := r.Body.Read(body); err != nil {
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
 		Danger("Error reading", r, err.Error())
+		return
 	}
+
 	// create ChatRoom obj
 	var cr data.ChatRoom
 	if err = json.Unmarshal(body, &cr); err != nil {
@@ -77,11 +79,12 @@ func handlePost(w http.ResponseWriter, r *http.Request) (err error) {
 	if err != nil {
 		return err
 	}
-	res, _ := createdChatRoom.ToJSON()
+	// res, _ := createdChatRoom.ToJSON()
 	w.WriteHeader(201)
-	if _, err := w.Write(res); err != nil {
-		Danger("Error writing", res)
-	}
+	WriteResponse(w, ctxId, createdChatRoom)
+	// if _, err := w.Write(res); err != nil {
+	// 	Danger("Error writing", res)
+	// }
 	return
 }
 
@@ -117,7 +120,7 @@ func handlePut(w http.ResponseWriter, r *http.Request, currentChatRoom *data.Cha
 
 // Delete a room
 // DELETE /chat/<id>
-func handleDelete(w http.ResponseWriter, r *http.Request, cr *data.ChatRoom) (err error) {
+func handleDelete(w http.ResponseWriter, r *http.Request, cr *data.ChatRoom, ctxId string) (err error) {
 	err = data.CS.Delete(cr)
 	if err != nil {
 		Warning("error encountered deleting chat room:", err.Error())
@@ -125,6 +128,6 @@ func handleDelete(w http.ResponseWriter, r *http.Request, cr *data.ChatRoom) (er
 	}
 	// report on status
 	Info("deleted chat room:", cr.Title)
-	ReportStatus(w, true, nil)
+	ReportStatus(w, true, nil, ctxId)
 	return
 }

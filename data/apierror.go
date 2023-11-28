@@ -42,8 +42,10 @@ type APIError struct {
 
 // Outcome represents status indicating success/failure of an operation
 type Outcome struct {
-	Status bool      `json:"status"`
-	Error  *APIError `json:"error,omitempty"`
+	Status      bool        `json:"status"`
+	Error       *APIError   `json:"error,omitempty"`
+	API_CALL_ID string      `json:"API_CALL_ID"`
+	Data        interface{} `json:"data,omitempty"`
 }
 
 // SetMsg will set the Msg based on the provided code

@@ -27,28 +27,49 @@ func Info(args ...interface{}) {
 
 // Danger will log information with "ERROR" prefix to logger
 func Danger(args ...interface{}) {
-	logger.SetPrefix("ERROR ")
-	logger.Println(args...)
+	// Retrieve caller details
+	pc, file, line, ok := runtime.Caller(1)
+	if !ok {
+		file = "??"
+		line = 0
+	}
+	callingFunc := runtime.FuncForPC(pc).Name()
+
+	// Log the error message along with caller information
+	logger.Printf("ERROR [%s:%d] %s: %v\n", file, line, callingFunc, args)
 }
 
 // Warning will log information with "WARNING" prefix to logger
 func Warning(args ...interface{}) {
 	logger.SetPrefix("WARNING ")
-	logger.Println(args...)
+	// Retrieve caller details
+	pc, file, line, ok := runtime.Caller(1)
+	if !ok {
+		file = "??"
+		line = 0
+	}
+	callingFunc := runtime.FuncForPC(pc).Name()
+
+	// Log the error message along with caller information
+	logger.Printf("WARNING [%s:%d] %s: %v\n", file, line, callingFunc, args)
 }
 
 // ReportStatus is a helper function to return a JSON response indicating outcome success/failure
-func ReportStatus(w http.ResponseWriter, success bool, err *data.APIError) {
+func ReportStatus(w http.ResponseWriter, success bool, err *data.APIError, ctxId string) {
 	var res *data.Outcome
 	w.Header().Set("Content-Type", "application/json")
 	if success {
 		res = &data.Outcome{
-			Status: success,
+			Status:      success,
+			API_CALL_ID: ctxId,
+			Data:        map[string]interface{}{},
 		}
 	} else {
 		res = &data.Outcome{
-			Status: success,
-			Error:  err,
+			Status:      success,
+			Error:       err,
+			API_CALL_ID: ctxId,
+			Data:        map[string]interface{}{},
 		}
 	}
 	response, _ := json.Marshal(res)

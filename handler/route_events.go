@@ -21,7 +21,7 @@ var (
 // Upgrade to a ws connection
 // Add to active chat session
 // GET /chats/{titleOrID}/ws
-func webSocketHandler(w http.ResponseWriter, r *http.Request) (err error) {
+func webSocketHandler(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 	queries := mux.Vars(r)
 	if titleOrID, ok := queries["titleOrID"]; ok {
 		// Fetch room & authorize

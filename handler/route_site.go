@@ -42,7 +42,7 @@ func chatbox(w http.ResponseWriter, r *http.Request) {
 
 // GET /chats/<id>/entrance
 // Default page
-func joinRoom(w http.ResponseWriter, r *http.Request) (err error) {
+func joinRoom(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 	queries := mux.Vars(r)
 	if titleOrID, ok := queries["titleOrID"]; ok {
 		cr, err := data.CS.Retrieve(titleOrID)
