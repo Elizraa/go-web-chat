@@ -1,6 +1,7 @@
 package data
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -47,15 +48,15 @@ func (cs ChatServer) push(cr *ChatRoom) {
 	// Update indices, create new session
 	*cs.Index++
 	// TODO: Generate UUIDs?
-	cr.ID = *cs.Index
+	// cr.ID = *cs.Index
 	cr.Clients = make(map[string]*Client)
 	cr.Type = strings.ToLower(cr.Type)
-	cr.Broker = newBroker(cr.ID)
+	cr.Broker = newBroker(cr.ChatRoomDB.ID)
 	// Start broker for rooms
 	go cr.Broker.listen()
 	// Push to chat server
-	cs.Rooms[strings.ToLower(cr.Title)] = cr
-	cs.RoomsID[cr.ID] = cr
+	cs.Rooms[strings.ToLower(cr.ChatRoomDB.Title)] = cr
+	cs.RoomsID[cr.ChatRoomDB.ID] = cr
 }
 
 func (cs ChatServer) pop(title string, ID int) {
@@ -78,11 +79,14 @@ func (cs ChatServer) Chats() (rooms []ChatRoom, err error) {
 // Retrieve returns a single chat room based on title or ID
 func (cs ChatServer) Retrieve(title string) (cr *ChatRoom, err error) {
 	if !cs.roomExists(title) {
+		fmt.Println("room not existtttttt")
+
 		return cr, &APIError{
 			Code:  101,
 			Field: title,
 		}
 	}
+	fmt.Println("room existtttttt")
 	if id := isInt(title); id != -1 {
 		cr = cs.RoomsID[id]
 	} else {
@@ -145,6 +149,11 @@ func (cs ChatServer) Add(cr *ChatRoom) (err error) {
 
 	cr.CreatedAt = time.Now()
 	cr.UpdatedAt = time.Now()
+	cs.push(cr)
+	return
+}
+
+func (cs ChatServer) PushCR(cr *ChatRoom) (err error) {
 	cs.push(cr)
 	return
 }

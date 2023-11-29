@@ -18,8 +18,8 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
-//EncodeJWT will generate a jwt token based
-func EncodeJWT(c *ChatEvent, cr *ChatRoom, secretKey string) (tokenString string, err error) {
+// EncodeJWT will generate a jwt token based
+func EncodeJWT(c *ChatEvent, cr *ChatRoomDB, secretKey string) (tokenString string, err error) {
 	// Declare the expiration time of the token
 	expirationTime := time.Now().Add(time.Duration(expirationConstantMinutes) * time.Minute)
 	// Create the JWT claims, which includes the username and expiry time
@@ -80,7 +80,7 @@ func ParseJWT(tokenString string, c *Claims, secretKey string) (err error) {
 	return
 }
 
-//RefreshJWT will refresh return a signed token with new expiration time
+// RefreshJWT will refresh return a signed token with new expiration time
 func (c Claims) RefreshJWT(secretKey string) (tokenString string, err error) {
 	// Ensure enough time has elapsed since last token was generated
 	if time.Until(time.Unix(c.ExpiresAt, 0)) > time.Duration(minimumRefreshDurationAllowedMinutes)*time.Minute {

@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/elizraa/chitchat/data"
 	"github.com/gorilla/mux"
@@ -23,12 +25,26 @@ var (
 // GET /chats/{titleOrID}/ws
 func webSocketHandler(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 	queries := mux.Vars(r)
-	if titleOrID, ok := queries["titleOrID"]; ok {
-		// Fetch room & authorize
-		cr, err := data.CS.Retrieve(titleOrID)
+	if ID, ok := queries["ID"]; ok {
+		// cr, err := data.CS.Retrieve(titleOrID)
+		intID, err := strconv.Atoi(ID)
 		if err != nil {
-			Warning("Error retrieving room", r, err)
+			Info("ID not integer", r, err)
 			return err
+		}
+		crDB, err := data.GetChatRoomByID(intID)
+		if err != nil {
+			Info("erroneous chats API request", r, err)
+			return err
+		}
+		cr, _ := data.CS.Retrieve(crDB.Title)
+		if cr == nil {
+			fmt.Println("============================================")
+			// Chat room doesn't exist in data.CS, create one and push it
+			cr = &data.ChatRoom{
+				ChatRoomDB: *crDB,
+			}
+			data.CS.PushCR(cr)
 		}
 		// Do stuff here:
 		wsConn, err := upgrader.Upgrade(w, r, nil)

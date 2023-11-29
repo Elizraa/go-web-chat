@@ -2,6 +2,8 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
 	"reflect"
 	"runtime"
@@ -19,23 +21,35 @@ var secretKey string = "my_secret_random_key_>_than_24_characters"
 func login(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 	w.Header().Set("Content-Type", "application/json")
 	// read in request
+	fmt.Println("000000000000000000000000000")
 	len := r.ContentLength
 	body := make([]byte, len)
-	if _, err := r.Body.Read(body); err != nil {
+	if _, err := io.ReadFull(r.Body, body); err != nil {
+		// Handle the error
 		Danger("Error reading request", r)
 	}
 	var c data.ChatEvent
 	if err := json.Unmarshal(body, &c); err != nil {
 		Danger("Error parsing token request", r)
 	}
+	fmt.Println("ccccccccccccccccccccccccc")
+
 	queries := mux.Vars(r)
-	if titleOrID, ok := queries["titleOrID"]; ok {
-		cr, err := data.CS.Retrieve(titleOrID)
+	if ID, ok := queries["ID"]; ok {
+		intID, err := strconv.Atoi(ID)
+		if err != nil {
+			Info("ID not integer", r, err)
+			return err
+		}
+		cr, err := data.GetChatRoomByID(intID)
 		if err != nil {
 			Info("erroneous chats API request", r, err)
 			return err
 		}
+		fmt.Println("1111111111111111111111111")
 		if cr.Type == data.PublicRoom {
+			fmt.Println("2222222222222222222222222222222222")
+
 			// Ignore public room
 			ReportStatus(w, true, nil, ctxId)
 		} else if cr.MatchesPassword(c.Password) {
@@ -82,8 +96,13 @@ func login(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 func renewToken(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 	w.Header().Set("Content-Type", "application/json")
 	queries := mux.Vars(r)
-	if titleOrID, ok := queries["titleOrID"]; ok {
-		cr, err := data.CS.Retrieve(titleOrID)
+	if ID, ok := queries["ID"]; ok {
+		intID, err := strconv.Atoi(ID)
+		if err != nil {
+			Info("ID not integer", r, err)
+			return err
+		}
+		cr, err := data.GetChatRoomByID(intID)
 		if err != nil {
 			Info("erroneous chats API request", r, err)
 			return err
@@ -140,8 +159,13 @@ func authorize(h errHandler) errHandler {
 			return h(w, r, ctxId)
 		}
 		queries := mux.Vars(r)
-		if titleOrID, ok := queries["titleOrID"]; ok {
-			cr, err := data.CS.Retrieve(titleOrID)
+		if ID, ok := queries["ID"]; ok {
+			intID, err := strconv.Atoi(ID)
+			if err != nil {
+				Info("ID not integer", r, err)
+				return err
+			}
+			cr, err := data.GetChatRoomByID(intID)
 			if err != nil {
 				Info("erroneous chats API request", r, err)
 				return err
@@ -198,6 +222,6 @@ func extractJwtToken(req *http.Request) (string, error) {
 
 // Generate unique key should ensure that the generated key is unique for a given room
 // This key does not need to be unique per user necessarily since the token will be unique
-func generateUniqueKey(cr *data.ChatRoom) string {
+func generateUniqueKey(cr *data.ChatRoomDB) string {
 	return secretKey + cr.Password + strconv.Itoa(cr.ID)
 }

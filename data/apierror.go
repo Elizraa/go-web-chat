@@ -96,6 +96,10 @@ func (e *APIError) Error() string {
 	return fmt.Sprintf("{\"error\": \"%s\", \"code\": %d}", e.Msg, e.Code)
 }
 
+func (e *APIError) ErrorCode() int {
+	return e.Code
+}
+
 func isInt(titleorID string) int {
 	if id, err := strconv.Atoi(titleorID); err == nil {
 		return id

@@ -1,6 +1,7 @@
 package data
 
 import (
+	"fmt"
 	"log"
 	"time"
 )
@@ -48,6 +49,8 @@ func (br *Broker) listen() {
 			// A client has dettached and we want to
 			// stop sending them messages.
 			if _, ok := br.Clients[c]; ok {
+				fmt.Println("=============== br clients =============")
+				fmt.Println("br.Clients", br.Clients, c, br.CloseClient)
 				delete(br.Clients, c)
 				close(c.Send)
 				//cr, _ := CS.Retrieve(strconv.Itoa(br.RoomID))

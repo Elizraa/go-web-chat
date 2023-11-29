@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -118,17 +119,21 @@ func TestRenewToken(t *testing.T) {
 // This should only be used as a band-aid to keep tests simple and independent for now
 func setJWTHeaders(t *testing.T, r *http.Request, id string, intendedValidity bool) {
 	t.Helper()
-	cr, _ := data.CS.Retrieve(id)
-	var myCr *data.ChatRoom = &data.ChatRoom{
-		ChatRoomDB: data.ChatRoomDB{
-			Password: cr.ChatRoomDB.Password,
-			ID:       cr.ChatRoomDB.ID,
-			Title:    cr.ChatRoomDB.Title,
-		},
+	intID, err := strconv.Atoi(id)
+	if err != nil {
+		Info("ID not integer", r, err)
 	}
+	cr, err := data.GetChatRoomByID(intID)
+	// var myCr *data.ChatRoom = &data.ChatRoom{
+	// 	ChatRoomDB: data.ChatRoomDB{
+	// 		Password: cr.Password,
+	// 		ID:       cr.ID,
+	// 		Title:    cr.Title,
+	// 	},
+	// }
 	if !intendedValidity {
-		myCr.Password = "bogus_incorrect_password"
+		cr.Password = "bogus_incorrect_password"
 	}
-	tkn, _ := data.EncodeJWT(&data.ChatEvent{User: "test_user", RoomID: cr.ID}, cr, generateUniqueKey(myCr))
+	tkn, _ := data.EncodeJWT(&data.ChatEvent{User: "test_user", RoomID: cr.ID}, cr, generateUniqueKey(cr))
 	r.Header.Set("Authorization", "Bearer "+tkn)
 }

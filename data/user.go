@@ -86,8 +86,12 @@ func (c *Client) ReadPump() {
 				c.subscribe(&ce)
 			case Broadcast:
 				// Populate activity
-				c.Room.Clients[ce.User].LastActivity = ce.Timestamp
-				c.broadcast(&ce)
+				userKey := ce.User
+				if client, exists := c.Room.Clients[userKey]; exists {
+					client.LastActivity = ce.Timestamp
+					c.broadcast(&ce)
+				}
+				log.Printf("Warning: User not exist on room yet %s", ce.User)
 			default:
 				// Populate activity
 				//c.Room.Clients[ce.User].LastActivity = ce.Timestamp

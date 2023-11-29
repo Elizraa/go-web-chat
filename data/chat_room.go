@@ -90,11 +90,11 @@ func (cr ChatRoom) ToJSON() (jsonEncoding []byte, err error) {
 	}
 	// Create new JSON struct with clients
 	jsonEncoding, err = json.Marshal(struct {
-		*ChatRoom
+		*ChatRoomDB
 		Clients []Client `json:"users"`
 	}{
-		ChatRoom: &cr,
-		Clients:  clientsSlice,
+		ChatRoomDB: &cr.ChatRoomDB,
+		Clients:    clientsSlice,
 	})
 	return jsonEncoding, err
 }
@@ -186,7 +186,7 @@ func (cr ChatRoom) clientExists(name string) bool {
 }
 
 // PrettyTime prints the creation date in a pretty format
-func (cr ChatRoom) PrettyTime() string {
+func (cr ChatRoomDB) PrettyTime() string {
 	layout := "Mon Jan _2 15:04"
 	return cr.CreatedAt.Format(layout)
 }

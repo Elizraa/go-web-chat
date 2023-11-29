@@ -13,8 +13,8 @@ import (
 func handleRoom(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 	queries := mux.Vars(r)
 	w.Header().Set("Content-Type", "application/json")
-	if titleOrID, ok := queries["titleOrID"]; ok {
-		cr, err := data.CS.Retrieve(titleOrID)
+	if ID, ok := queries["ID"]; ok {
+		cr, err := data.CS.Retrieve(ID)
 		if err != nil {
 			Info("erroneous chats API request", r, err)
 			return err
@@ -24,7 +24,7 @@ func handleRoom(w http.ResponseWriter, r *http.Request, ctxId string) (err error
 			err = handleGet(w, r, cr)
 			return err
 		case "PUT":
-			err = (handlePut(w, r, cr, titleOrID))
+			err = (handlePut(w, r, cr, ID))
 			return err
 		case "DELETE":
 			err = handleDelete(w, r, cr, ctxId)

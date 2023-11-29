@@ -41,7 +41,7 @@ func registerHandlers() *mux.Router {
 
 	// Chat Sessions (WebSocket)
 	// Do not authorize since you can't add headers to WebSockets. We will do authorization when actually receiving chat messages
-	api.Handle("/chats/{titleOrID}/ws", errHandler(authorize(webSocketHandler))).Methods(http.MethodGet)
+	api.Handle("/chats/{ID}/ws", errHandler(authorize(webSocketHandler))).Methods(http.MethodGet)
 
 	api.HandleFunc("/favicon.ico", faviconHandler)
 
@@ -53,13 +53,13 @@ func RegisterChatsAPI(api *mux.Router) {
 	// REST-API for chat room [JSON]
 	api.Handle("/chats", errHandler(handlePost)).Methods(http.MethodPost)
 	api.Handle("/chats/all", errHandler(handleGetAllChatrooms)).Methods(http.MethodGet)
-	api.Handle("/chats/{titleOrID}", errHandler(authorize(handleRoom))).Methods(http.MethodGet, http.MethodPut, http.MethodDelete)
+	api.Handle("/chats/{ID}", errHandler(authorize(handleRoom))).Methods(http.MethodGet, http.MethodPut, http.MethodDelete)
 
 	// Check password matches room
-	api.Handle("/chats/{titleOrID}/token", errHandler(login)).Methods(http.MethodPost)
+	api.Handle("/chats/{ID}/token", errHandler(login)).Methods(http.MethodPost)
 
 	// Check password matches room
-	api.Handle("/chats/{titleOrID}/token/renew", errHandler(renewToken)).Methods(http.MethodGet)
+	api.Handle("/chats/{ID}/token/renew", errHandler(renewToken)).Methods(http.MethodGet)
 
 }
 
@@ -68,10 +68,10 @@ func RegisterChatsHTML(api *mux.Router) {
 	api.HandleFunc("/chats", logConsole(listChats)).Methods(http.MethodGet)
 
 	// Load chat box [HTML]
-	api.HandleFunc("/chats/{titleOrID}/chatbox", logConsole(chatbox)).Methods(http.MethodGet)
+	api.HandleFunc("/chats/{ID}/chatbox", logConsole(chatbox)).Methods(http.MethodGet)
 
 	// Entrance [HTML]
-	api.Handle("/chats/{titleOrID}/entrance", errHandler(joinRoom)).Methods(http.MethodGet)
+	api.Handle("/chats/{ID}/entrance", errHandler(joinRoom)).Methods(http.MethodGet)
 }
 
 func init() {
