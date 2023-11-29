@@ -36,24 +36,8 @@ func registerHandlers() *mux.Router {
 	staticDir := "/static/"
 	api.PathPrefix(staticDir).Handler(http.StripPrefix(staticDir, http.FileServer(http.Dir(Config.Static))))
 
-	//REST-API for chat room [JSON]
-	api.Handle("/chats", errHandler(handlePost)).Methods(http.MethodPost)
-	api.Handle("/chats/{titleOrID}", errHandler(authorize(handleRoom))).Methods(http.MethodGet, http.MethodPut, http.MethodDelete)
-
-	// List all rooms in [HTML]
-	api.HandleFunc("/chats", logConsole(listChats)).Methods(http.MethodGet)
-
-	// Entrance [HTML]
-	api.Handle("/chats/{titleOrID}/entrance", errHandler(joinRoom)).Methods(http.MethodGet)
-
-	// Check password matches room
-	api.Handle("/chats/{titleOrID}/token", errHandler(login)).Methods(http.MethodPost)
-
-	// Check password matches room
-	api.Handle("/chats/{titleOrID}/token/renew", errHandler(renewToken)).Methods(http.MethodGet)
-
-	// Load chat box [HTML]
-	api.HandleFunc("/chats/{titleOrID}/chatbox", logConsole(chatbox)).Methods(http.MethodGet)
+	RegisterChatsAPI(api)
+	RegisterChatsHTML(api)
 
 	// Chat Sessions (WebSocket)
 	// Do not authorize since you can't add headers to WebSockets. We will do authorization when actually receiving chat messages
@@ -64,6 +48,30 @@ func registerHandlers() *mux.Router {
 	// Error page
 	api.HandleFunc("/err", logConsole(handleError)).Methods(http.MethodGet)
 	return api
+}
+func RegisterChatsAPI(api *mux.Router) {
+	// REST-API for chat room [JSON]
+	api.Handle("/chats", errHandler(handlePost)).Methods(http.MethodPost)
+	api.Handle("/chats/all", errHandler(handleGetAllChatrooms)).Methods(http.MethodGet)
+	api.Handle("/chats/{titleOrID}", errHandler(authorize(handleRoom))).Methods(http.MethodGet, http.MethodPut, http.MethodDelete)
+
+	// Check password matches room
+	api.Handle("/chats/{titleOrID}/token", errHandler(login)).Methods(http.MethodPost)
+
+	// Check password matches room
+	api.Handle("/chats/{titleOrID}/token/renew", errHandler(renewToken)).Methods(http.MethodGet)
+
+}
+
+func RegisterChatsHTML(api *mux.Router) {
+	// List all rooms in [HTML]
+	api.HandleFunc("/chats", logConsole(listChats)).Methods(http.MethodGet)
+
+	// Load chat box [HTML]
+	api.HandleFunc("/chats/{titleOrID}/chatbox", logConsole(chatbox)).Methods(http.MethodGet)
+
+	// Entrance [HTML]
+	api.Handle("/chats/{titleOrID}/entrance", errHandler(joinRoom)).Methods(http.MethodGet)
 }
 
 func init() {

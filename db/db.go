@@ -1,10 +1,9 @@
-package main
+package db
 
 import (
 	"fmt"
 	"log"
 
-	"github.com/elizraa/chitchat/data"
 	"github.com/jinzhu/gorm"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"    //mysql database driver
@@ -23,9 +22,6 @@ func InitDB(Dbdriver, DbUser, DbPassword, DbPort, DbHost, DbName string) {
 	} else {
 		fmt.Printf("We are connected to the %s database\n", Dbdriver)
 	}
-
-	// Migrate the schema
-	db.AutoMigrate(&data.ChatRoomDB{}) // Assuming ChatRoomDB is your database model
 
 	// Assign the database connection to the global variable
 	DB = db

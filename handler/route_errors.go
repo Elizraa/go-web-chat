@@ -34,10 +34,31 @@ func (fn errHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			ReportStatus(w, false, apierr, ctxId)
 		} else {
 			Danger("Server error", err.Error())
-			http.Error(w, err.Error(), 500)
+			WriteErrorResponse(w, ctxId, err.Error())
 		}
 	}
 	Info("[REQUEST]", ctxId, r.RequestURI)
+}
+
+func WriteErrorResponse(w http.ResponseWriter, ctxId string, errMsg interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	// Create a map to hold ctxId and response data
+	responseDataWithCtxId := map[string]interface{}{
+		"API_CALL_ID": ctxId,
+		"error":       errMsg,
+		"data":        map[string]interface{}{},
+		"status":      false,
+	}
+	// Convert responseDataWithCtxId to JSON
+	jsonData, err := json.Marshal(responseDataWithCtxId)
+	if err != nil {
+		Danger("Error marshaling response data", err.Error())
+		http.Error(w, "Internal Server Error", 500)
+		return
+	}
+	// Write the JSON response to the http.ResponseWriter
+	w.Write(jsonData)
 }
 
 // WriteResponse writes the ctxId and response data to the http.ResponseWriter

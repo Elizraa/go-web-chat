@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/elizraa/chitchat/db"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -19,7 +20,7 @@ const (
 
 // Database model
 type ChatRoomDB struct {
-	Title       string    `json:"title"`
+	Title       string    `json:"title" gorm:"unique;not null"`
 	Description string    `json:"description,omitempty"`
 	Type        string    `json:"visibility"`
 	Password    string    `json:"password,omitempty"`
@@ -34,6 +35,47 @@ type ChatRoom struct {
 	ChatRoomDB
 	Broker  *Broker            `json:"-"`
 	Clients map[string]*Client `json:"-"`
+}
+
+func GetChatRoomByID(id int) (*ChatRoomDB, error) {
+	var chatRoom ChatRoomDB
+	if err := db.DB.First(&chatRoom, id).Error; err != nil {
+		return nil, err
+	}
+	return &chatRoom, nil
+}
+
+func GetAllChatRoom() (*[]ChatRoomDB, error) {
+	chatrooms := []ChatRoomDB{}
+	err := db.DB.Debug().Model(&ChatRoomDB{}).Limit(100).Find(&chatrooms).Error
+	if err != nil {
+		return &[]ChatRoomDB{}, err
+	}
+	return &chatrooms, err
+}
+
+func CreateChatRoom(cr *ChatRoomDB) error {
+	// validate chat room request
+	if apierr, valid := cr.IsValid(); !valid {
+		return apierr
+	}
+	cr.Type = strings.ToLower(cr.Type)
+	if cr.Type != PublicRoom {
+		pass, err := bcrypt.GenerateFromPassword([]byte(cr.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return &APIError{
+				Code:  104,
+				Field: "secret",
+			}
+		}
+		cr.Password = string(pass)
+	} else if cr.Type == PublicRoom {
+		cr.Password = ""
+	}
+
+	cr.CreatedAt = time.Now()
+	cr.UpdatedAt = time.Now()
+	return db.DB.Create(cr).Error
 }
 
 // ToJSON marshals a ChatRoom object in a JSON encoding that can be returned to users
@@ -82,12 +124,12 @@ func (cr ChatRoom) RemoveClient(user string) (err error) {
 }
 
 // Authorize authorizes a given ChatEvent for the Room
-func (cr ChatRoom) Authorize(c *ChatEvent) bool {
+func (cr ChatRoomDB) Authorize(c *ChatEvent) bool {
 	return cr.MatchesPassword(c.Password)
 }
 
 // IsValid validates a chat room fields are still valid
-func (cr ChatRoom) IsValid() (err *APIError, validity bool) {
+func (cr ChatRoomDB) IsValid() (err *APIError, validity bool) {
 	// Title should be at least 2 characters
 	if len(cr.Title) < 2 || len(cr.Title) > 70 {
 		return &APIError{
@@ -128,7 +170,7 @@ func (cr ChatRoom) IsValid() (err *APIError, validity bool) {
 }
 
 // MatchesPassword takes in a value and compares it with the room's password
-func (cr ChatRoom) MatchesPassword(val string) bool {
+func (cr ChatRoomDB) MatchesPassword(val string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(cr.Password), []byte(val))
 	return err == nil
 }

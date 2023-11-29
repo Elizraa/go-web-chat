@@ -65,23 +65,28 @@ func handlePost(w http.ResponseWriter, r *http.Request, ctxId string) (err error
 	}
 
 	// create ChatRoom obj
-	var cr data.ChatRoom
+	var cr data.ChatRoomDB
 	if err = json.Unmarshal(body, &cr); err != nil {
 		Warning("error encountered reading POST:", err.Error())
 		return err
 	}
-	if err = data.CS.Add(&cr); err != nil {
-		Warning("error encountered adding chat room:", err.Error())
+
+	if err = data.CreateChatRoom(&cr); err != nil {
+		Warning("error creating chatroom:", err.Error())
 		return err
 	}
+	// if err = data.CS.Add(&cr); err != nil {
+	// 	Warning("error encountered adding chat room:", err.Error())
+	// 	return err
+	// }
 	// Retrieve updated object
-	createdChatRoom, err := data.CS.Retrieve(cr.Title)
+	// createdChatRoom, err := data.CS.Retrieve(cr.Title)
 	if err != nil {
 		return err
 	}
 	// res, _ := createdChatRoom.ToJSON()
 	w.WriteHeader(201)
-	WriteResponse(w, ctxId, createdChatRoom)
+	WriteResponse(w, ctxId, cr)
 	// if _, err := w.Write(res); err != nil {
 	// 	Danger("Error writing", res)
 	// }
@@ -129,5 +134,18 @@ func handleDelete(w http.ResponseWriter, r *http.Request, cr *data.ChatRoom, ctx
 	// report on status
 	Info("deleted chat room:", cr.Title)
 	ReportStatus(w, true, nil, ctxId)
+	return
+}
+
+func handleGetAllChatrooms(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
+	w.Header().Set("Content-Type", "application/json")
+
+	chatrooms, err := data.GetAllChatRoom()
+	if err != nil {
+		Warning("error fetching chatrooms:", err.Error())
+		return
+	}
+	w.WriteHeader(201)
+	WriteResponse(w, ctxId, chatrooms)
 	return
 }
