@@ -37,12 +37,12 @@ func index(w http.ResponseWriter, r *http.Request) {
 // Default page
 func chatbox(w http.ResponseWriter, r *http.Request) {
 	queries := mux.Vars(r)
-	if titleOrID, ok := queries["titleOrID"]; ok {
+	if titleOrID, ok := queries["ID"]; ok {
 		cr, err := data.CS.Retrieve(titleOrID)
 		if err != nil {
 			Info("erroneous chats API request", r, err)
 		}
-		generateHTMLContent(w, &cr, "chat")
+		generateHTMLContent(w, &cr.ChatRoomDB, "chat")
 	}
 }
 

@@ -21,7 +21,6 @@ var secretKey string = "my_secret_random_key_>_than_24_characters"
 func login(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 	w.Header().Set("Content-Type", "application/json")
 	// read in request
-	fmt.Println("000000000000000000000000000")
 	len := r.ContentLength
 	body := make([]byte, len)
 	if _, err := io.ReadFull(r.Body, body); err != nil {
@@ -32,7 +31,6 @@ func login(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 	if err := json.Unmarshal(body, &c); err != nil {
 		Danger("Error parsing token request", r)
 	}
-	fmt.Println("ccccccccccccccccccccccccc")
 
 	queries := mux.Vars(r)
 	if ID, ok := queries["ID"]; ok {
@@ -46,9 +44,7 @@ func login(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 			Info("erroneous chats API request", r, err)
 			return err
 		}
-		fmt.Println("1111111111111111111111111")
 		if cr.Type == data.PublicRoom {
-			fmt.Println("2222222222222222222222222222222222")
 
 			// Ignore public room
 			ReportStatus(w, true, nil, ctxId)
@@ -153,9 +149,12 @@ func renewToken(w http.ResponseWriter, r *http.Request, ctxId string) (err error
 // authorize will call the handler if authorization bearer token is valid. Otherwise, it will send a failed outcome
 func authorize(h errHandler) errHandler {
 	return func(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
+		fmt.Println("============================", "auth")
+
 		// Skip authorization for special case of GET /chats/<id> for now
 		// TODO: Rewrite client-side app to request token before GET chat room
 		if name := runtime.FuncForPC(reflect.ValueOf(h).Pointer()).Name(); strings.HasSuffix(name, "handleRoom") && r.Method == http.MethodGet {
+			fmt.Println("caaaaaaaaaaaaaaa", name)
 			return h(w, r, ctxId)
 		}
 		queries := mux.Vars(r)
@@ -167,9 +166,11 @@ func authorize(h errHandler) errHandler {
 			}
 			cr, err := data.GetChatRoomByID(intID)
 			if err != nil {
+				fmt.Println("cr", cr)
 				Info("erroneous chats API request", r, err)
 				return err
 			}
+			fmt.Println("cr.Type", cr.Type, data.PublicRoom)
 			if cr.Type != data.PublicRoom {
 				// Check authorization header
 				// Get the JWT string from the cookie
@@ -186,6 +187,7 @@ func authorize(h errHandler) errHandler {
 					return err
 				}
 			}
+			fmt.Println("============================", "auth_success")
 
 			// Success, call h(w,r)
 			return h(w, r, ctxId)

@@ -1,7 +1,6 @@
 package data
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -79,14 +78,12 @@ func (cs ChatServer) Chats() (rooms []ChatRoom, err error) {
 // Retrieve returns a single chat room based on title or ID
 func (cs ChatServer) Retrieve(title string) (cr *ChatRoom, err error) {
 	if !cs.roomExists(title) {
-		fmt.Println("room not existtttttt")
 
 		return cr, &APIError{
 			Code:  101,
 			Field: title,
 		}
 	}
-	fmt.Println("room existtttttt")
 	if id := isInt(title); id != -1 {
 		cr = cs.RoomsID[id]
 	} else {
