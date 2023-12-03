@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -25,7 +24,6 @@ var (
 // GET /chats/{titleOrID}/ws
 func webSocketHandler(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 	queries := mux.Vars(r)
-	fmt.Println("========================", "ws")
 	if ID, ok := queries["ID"]; ok {
 		// cr, err := data.CS.Retrieve(titleOrID)
 		intID, err := strconv.Atoi(ID)
@@ -33,7 +31,6 @@ func webSocketHandler(w http.ResponseWriter, r *http.Request, ctxId string) (err
 			Info("ID not integer", r, err)
 			return err
 		}
-		fmt.Println("========================", intID)
 		crDB, err := data.GetChatRoomByID(intID)
 		if err != nil {
 			Info("erroneous chats API request", r, err)

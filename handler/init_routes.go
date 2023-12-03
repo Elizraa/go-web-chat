@@ -52,6 +52,7 @@ func registerHandlers() *mux.Router {
 func RegisterChatsAPI(api *mux.Router) {
 	// REST-API for chat room [JSON]
 	api.Handle("/chats", errHandler(handlePost)).Methods(http.MethodPost)
+	api.Handle("/chats/events/{ID}", errHandler(handleGetAllChatEvents)).Methods(http.MethodGet)
 	api.Handle("/chats/all", errHandler(handleGetAllChatrooms)).Methods(http.MethodGet)
 	api.Handle("/chats/{ID}", errHandler(authorize(handleRoom))).Methods(http.MethodGet, http.MethodPut, http.MethodDelete)
 

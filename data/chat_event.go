@@ -1,9 +1,16 @@
 package data
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
+	"log"
 	"strings"
 	"time"
+
+	"github.com/elizraa/chitchat/config"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const (
@@ -39,6 +46,57 @@ func ValidateEvent(data []byte) (ChatEvent, error) {
 	} else if evt.Msg == "" && strings.ToLower(evt.EventType) == Broadcast {
 		return evt, &APIError{Code: 303, Field: "msg"}
 	}
-
 	return evt, nil
+}
+
+// InsertChatEvent inserts a ChatEvent into MongoDB
+func InsertChatEvent(event ChatEvent) error {
+	chatEventCollection := config.MongoDBClient.Database("chat_server").Collection("chat_events")
+	fmt.Println(event)
+
+	// Set timestamp if it is not already set
+	if event.Timestamp.IsZero() {
+		event.Timestamp = time.Now()
+	}
+
+	_, err := chatEventCollection.InsertOne(context.TODO(), event)
+	if err != nil {
+		log.Println("Error inserting chat event:", err)
+		return err
+	}
+
+	log.Println("Chat event inserted successfully.")
+	return nil
+}
+
+// FetchChatEvents retrieves chat events based on roomID and sorts by timestamp in ascending order
+func FetchChatEvents(roomID int) ([]ChatEvent, error) {
+	chatEventCollection := config.MongoDBClient.Database("chat_server").Collection("chat_events")
+	filter := bson.D{{Key: "roomid", Value: roomID}}
+
+	options := options.Find().SetSort(bson.D{{Key: "time", Value: 1}})
+	cursor, err := chatEventCollection.Find(context.TODO(), filter, options)
+	if err != nil {
+		log.Println("Error fetching chat events:", err)
+		return nil, err
+	}
+	defer cursor.Close(context.TODO())
+
+	var chatEvents []ChatEvent
+	for cursor.Next(context.TODO()) {
+		var event ChatEvent
+		err := cursor.Decode(&event)
+		if err != nil {
+			log.Println("Error decoding chat event:", err)
+			return nil, err
+		}
+		chatEvents = append(chatEvents, event)
+	}
+
+	if err := cursor.Err(); err != nil {
+		log.Println("Cursor error:", err)
+		return nil, err
+	}
+
+	return chatEvents, nil
 }

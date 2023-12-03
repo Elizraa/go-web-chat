@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/elizraa/chitchat/db"
+	"github.com/elizraa/chitchat/config"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -39,7 +39,7 @@ type ChatRoom struct {
 
 func GetChatRoomByID(id int) (*ChatRoomDB, error) {
 	var chatRoom ChatRoomDB
-	if err := db.DB.First(&chatRoom, id).Error; err != nil {
+	if err := config.DB.First(&chatRoom, id).Error; err != nil {
 		return nil, err
 	}
 	return &chatRoom, nil
@@ -47,7 +47,7 @@ func GetChatRoomByID(id int) (*ChatRoomDB, error) {
 
 func GetAllChatRoom() (*[]ChatRoomDB, error) {
 	chatrooms := []ChatRoomDB{}
-	err := db.DB.Debug().Model(&ChatRoomDB{}).Limit(100).Find(&chatrooms).Error
+	err := config.DB.Debug().Model(&ChatRoomDB{}).Limit(100).Find(&chatrooms).Error
 	if err != nil {
 		return &[]ChatRoomDB{}, err
 	}
@@ -75,7 +75,7 @@ func CreateChatRoom(cr *ChatRoomDB) error {
 
 	cr.CreatedAt = time.Now()
 	cr.UpdatedAt = time.Now()
-	return db.DB.Create(cr).Error
+	return config.DB.Create(cr).Error
 }
 
 // ToJSON marshals a ChatRoom object in a JSON encoding that can be returned to users

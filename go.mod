@@ -9,5 +9,6 @@ require (
 	github.com/gorilla/websocket v1.4.2
 	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.5.1
-	golang.org/x/crypto v0.0.0-20201208171446-5f87f3452ae9
+	go.mongodb.org/mongo-driver v1.13.0
+	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
 )

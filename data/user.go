@@ -73,7 +73,8 @@ func (c *Client) ReadPump() {
 			}
 			// Set timestamp and room ID
 			ce.Timestamp = time.Now()
-			ce.RoomID = c.Room.ID
+			ce.RoomID = c.Room.ChatRoomDB.ID
+			InsertChatEvent(ce)
 
 			// Perform requested action
 			switch ce.EventType {

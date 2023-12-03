@@ -2,8 +2,10 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/elizraa/chitchat/data"
 	"github.com/gorilla/mux"
@@ -147,5 +149,30 @@ func handleGetAllChatrooms(w http.ResponseWriter, r *http.Request, ctxId string)
 	}
 	w.WriteHeader(201)
 	WriteResponse(w, ctxId, chatrooms)
+	return
+}
+
+func handleGetAllChatEvents(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
+	w.Header().Set("Content-Type", "application/json")
+	queries := mux.Vars(r)
+	if ID, ok := queries["ID"]; ok {
+		intID, err := strconv.Atoi(ID)
+		if err != nil {
+			Info("ID not integer", r, err)
+			return err
+		}
+		chat_events, err := data.FetchChatEvents(intID)
+		if err != nil {
+			Info("erroneous chats API request", r, err)
+			return err
+		}
+
+		fmt.Println("intID", intID)
+		fmt.Println(chat_events)
+
+		w.WriteHeader(201)
+		WriteResponse(w, ctxId, chat_events)
+		return err
+	}
 	return
 }

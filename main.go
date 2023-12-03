@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/elizraa/chitchat/config"
 	"github.com/elizraa/chitchat/data"
-	"github.com/elizraa/chitchat/db"
 	"github.com/elizraa/chitchat/handler"
 	"github.com/joho/godotenv"
 )
@@ -34,9 +34,11 @@ func main() {
 		address = "0.0.0.0:" + port
 	}
 
-	db.InitDB(os.Getenv("DB_DRIVER"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_PORT"), os.Getenv("DB_HOST"), os.Getenv("DB_NAME"))
+	config.InitDB(os.Getenv("DB_DRIVER"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_PORT"), os.Getenv("DB_HOST"), os.Getenv("DB_NAME"))
 	// Migrate the schema
-	db.DB.AutoMigrate(&data.ChatRoomDB{}) // Assuming ChatRoomDB is your database model
+	config.DB.AutoMigrate(&data.ChatRoomDB{}) // Assuming ChatRoomDB is your database model
+
+	config.ConnectMongoDatabase()
 
 	// starting up the server
 	server := &http.Server{
