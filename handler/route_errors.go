@@ -16,7 +16,6 @@ type errHandler func(http.ResponseWriter, *http.Request, string) error
 func (fn errHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctxId := GenerateAPICallID()
 	if err := fn(w, r, ctxId); err != nil {
-		fmt.Println("errrrorrr")
 		if apierr, ok := err.(*data.APIError); ok {
 
 			w.Header().Set("Content-Type", "application/json")

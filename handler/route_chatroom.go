@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -166,9 +165,6 @@ func handleGetAllChatEvents(w http.ResponseWriter, r *http.Request, ctxId string
 			Info("erroneous chats API request", r, err)
 			return err
 		}
-
-		fmt.Println("intID", intID)
-		fmt.Println(chat_events)
 
 		w.WriteHeader(201)
 		WriteResponse(w, ctxId, chat_events)

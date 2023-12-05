@@ -42,6 +42,7 @@ var chat = function () {
     // Start WebSocket Connection
     new Promise(
         function (resolve) {
+            retrieveChat(ID)
             startSession(ID, resolve);
         }).then(function (result) {
             conn = result;
@@ -68,6 +69,37 @@ var chat = function () {
             };
 
         });
+
+    function retrieveChat(id){
+        const apiEndpoint = "http://" + document.location.host + "/chats/events/" + id;
+
+        // Call API to get chat messages
+        fetch(apiEndpoint)
+        .then(response => response.json())
+        .then(data => {
+            if(data.status){
+                // Assuming the API returns an array of messages in the 'data' property
+                data.data.forEach(message => {
+                    if (message.event_type === "join" || message.event_type === "send") {
+                        pushBalon(message.msg, message.name, new Date(message.time).toLocaleTimeString(), message.color);
+                    }
+                });
+
+                // Assuming the API returns an array of messages
+                data.forEach(message => {
+                    pushBalon(message.msg, message.name, new Date(message.timestamp).toLocaleTimeString(), message.color);
+                });
+            } else {
+                console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                console.log(apiEndpoint)
+                console.error('API returned an error:', data.error);
+            }
+        })
+
+        .catch(error => {
+            console.error('Error fetching chat messages:', error);
+        });
+    }
 
     // Functions for WebSockets
     // Start event source for current Room ID

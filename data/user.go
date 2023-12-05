@@ -74,7 +74,6 @@ func (c *Client) ReadPump() {
 			// Set timestamp and room ID
 			ce.Timestamp = time.Now()
 			ce.RoomID = c.Room.ChatRoomDB.ID
-			InsertChatEvent(ce)
 
 			// Perform requested action
 			switch ce.EventType {
@@ -88,6 +87,8 @@ func (c *Client) ReadPump() {
 			case Broadcast:
 				// Populate activity
 				userKey := ce.User
+				InsertChatEvent(ce)
+
 				if client, exists := c.Room.Clients[userKey]; exists {
 					client.LastActivity = ce.Timestamp
 					c.broadcast(&ce)
@@ -183,6 +184,7 @@ func (c *Client) subscribe(evt *ChatEvent) {
 	log.Println("Adding client to Chatroom: ", evt.User)
 	evt.EventType = Subscribe
 	evt.Msg = fmt.Sprintf("%s entered the room.", evt.User)
+	InsertChatEvent(*evt)
 	go func() {
 		time.Sleep(200 * time.Millisecond)
 		c.Room.Broker.Notification <- formatEventData(evt)
