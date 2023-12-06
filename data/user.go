@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -60,8 +61,8 @@ func (c *Client) ReadPump() {
 				res, _ := json.Marshal(&ChatEvent{User: c.Username, Msg: fmt.Sprintf("%s has left the room.", c.Username), Color: c.Color})
 				c.Room.Broker.Notification <- res
 			}*/
+			log.Printf("errorrrrrrrrrrrrssssssssss: %v", err)
 			c.unsubscribe(&ChatEvent{User: c.Username, Color: c.Color})
-			log.Printf("error: %v", err)
 			break
 		}
 		switch mt {
@@ -74,6 +75,7 @@ func (c *Client) ReadPump() {
 			// Set timestamp and room ID
 			ce.Timestamp = time.Now()
 			ce.RoomID = c.Room.ChatRoomDB.ID
+			fmt.Println(ce.EventType)
 
 			// Perform requested action
 			switch ce.EventType {
@@ -83,13 +85,13 @@ func (c *Client) ReadPump() {
 				c.unsubscribe(&ce)
 			case Subscribe:
 				// LastActivity will be populated in subscribe
+				ln("testttttttttttttttt")
 				c.subscribe(&ce)
 			case Broadcast:
 				// Populate activity
 				userKey := ce.User
 				InsertChatEvent(ce)
-
-				if client, exists := c.Room.Clients[userKey]; exists {
+				if client, exists := c.Room.Clients[strings.ToLower(userKey)]; exists {
 					client.LastActivity = ce.Timestamp
 					c.broadcast(&ce)
 				}

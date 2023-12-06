@@ -43,8 +43,14 @@ func login(w http.ResponseWriter, r *http.Request, ctxId string) (err error) {
 			Info("erroneous chats API request", r, err)
 			return err
 		}
+		crs, _ := data.CS.Retrieve(cr.Title)
+		if crs == nil {
+			crs = &data.ChatRoom{
+				ChatRoomDB: *cr,
+			}
+			data.CS.PushCR(crs)
+		}
 		if cr.Type == data.PublicRoom {
-
 			// Ignore public room
 			ReportStatus(w, true, nil, ctxId)
 		} else if cr.MatchesPassword(c.Password) {

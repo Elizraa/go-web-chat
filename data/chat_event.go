@@ -3,7 +3,6 @@ package data
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -51,8 +50,8 @@ func ValidateEvent(data []byte) (ChatEvent, error) {
 
 // InsertChatEvent inserts a ChatEvent into MongoDB
 func InsertChatEvent(event ChatEvent) error {
+	return nil
 	chatEventCollection := config.MongoDBClient.Database("chat_server").Collection("chat_events")
-	fmt.Println(event)
 
 	// Set timestamp if it is not already set
 	if event.Timestamp.IsZero() {

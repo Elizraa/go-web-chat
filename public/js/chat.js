@@ -90,8 +90,6 @@ var chat = function () {
                     pushBalon(message.msg, message.name, new Date(message.timestamp).toLocaleTimeString(), message.color);
                 });
             } else {
-                console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-                console.log(apiEndpoint)
                 console.error('API returned an error:', data.error);
             }
         })

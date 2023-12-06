@@ -44,8 +44,14 @@ func webSocketHandler(w http.ResponseWriter, r *http.Request, ctxId string) (err
 			}
 			data.CS.PushCR(cr)
 		}
+		h := http.Header{}
+		for _, sub := range websocket.Subprotocols(r) {
+			h.Set("Sec-Websocket-Protocol", sub)
+			break
+		}
+
 		// Do stuff here:
-		wsConn, err := upgrader.Upgrade(w, r, nil)
+		wsConn, err := upgrader.Upgrade(w, r, h)
 		if err != nil {
 			errorMessage(w, r, "Critical error creating WebSocket: "+err.Error())
 			Danger("error creating WebSocket: ", err)
