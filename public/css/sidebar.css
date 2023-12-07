@@ -9,6 +9,26 @@ body {
     background: #fafafa;
 }
 
+.profile-btn {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #ffffff;
+    cursor: pointer;
+    justify-content: center;
+}
+
+.profile-circle {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background-color: #ccc; /* Default color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 8px;
+}
+
 p {
     font-family: 'Poppins', sans-serif;
     font-size: 1.1em;

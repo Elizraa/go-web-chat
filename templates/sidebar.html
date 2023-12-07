@@ -49,6 +49,12 @@
                 About
             </a>
         </li>
+        <li>
+            <a href="#" data-toggle="modal" data-target="#login-modal" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i>
+                Login
+            </a>
+        </li>
     </ul>
 
     <ul class="list-unstyled CTAs">
@@ -57,4 +63,31 @@
         </li>
     </ul>
 </nav>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Check if username is in localStorage
+        const username = localStorage.getItem("username");
+        const color = localStorage.getItem("color");
+
+        if (username) {
+            // If username exists, create a circular profile
+            const profileContainer = document.createElement("div");
+            profileContainer.classList.add("profile-btn");
+
+            const profileCircle = document.createElement("div");
+            profileCircle.classList.add("profile-circle");
+            profileCircle.style.backgroundColor = color || "#ccc";
+
+            const usernameText = document.createTextNode(username);
+
+            // Append elements
+            profileCircle.appendChild(usernameText);
+            profileContainer.appendChild(profileCircle);
+
+            // Replace the existing login button with the profile
+            const loginButton = document.querySelector('.login-btn');
+            loginButton.replaceWith(profileContainer);
+        }
+    });
+</script>
 {{ end }}

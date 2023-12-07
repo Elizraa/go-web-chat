@@ -12,6 +12,57 @@ $(document).ready(function () {
     console.log("ready");
 });
 
+
+// User login
+function loginUser() {
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+
+    new Promise(function (resolve, reject) {
+        // Validate form
+        if (validateLoginForm(username, password)) {
+            resolve({ username: username, password: password });
+        } else {
+            reject("Invalid form data");
+        }
+    }).then(function (credentials) {
+        // Submit login request
+        return new Promise(function (resolve, reject) {
+            loginUserRequest(username, password, resolve, reject);
+        });
+    }).then(function (response) {
+        console.log("LOGINNN", response)
+
+        // Login successful, store data and redirect
+        localStorage.setItem("username", response.name);
+        localStorage.setItem("color", response.color);
+        localStorage.setItem("token", response.token);
+
+        // Refresh the window
+        window.location.reload();
+        // window.location.href = "/dashboard"; // Redirect to the dashboard or .any other page
+   }).catch(function (error) {
+        // Handle errors
+        console.log("error_coy", error);
+        displayAlert(error);
+    });
+}
+
+// Validate login form
+function validateLoginForm(username, password) {
+    if (!username || !password) {
+        displayAlert("Username and password are required");
+        return false;
+    }
+    return true;
+}
+
+// Display alert
+function displayAlert(message) {
+    // Implement your logic to display an alert or error message to the user
+    console.error(message);
+}
+
 var create = function () {
     console.log("Create Rooms...");
     createRoom("Default Chat", "Another 2nd default chat", "public", "david", "");
@@ -96,14 +147,12 @@ function newRoom() {
             // wait for confirmation that room is created
             .then(function (outcome) {
                 // Define new promise to retrieve room
-                console.log(outcome);
                 new Promise(
                     function (resolve, reject) {
-                        retrieveRoom(title, resolve, reject);
+                        retrieveRoom(outcome.data.id, resolve, reject);
                     })
                     .then(function (room) {
                         // Success! created & retrieved room object
-                        console.log("fetched room", room);
                         // redirect to chat room
                         window.location.href = "/chats/" + room.id + "/entrance"
                     }).catch(
@@ -114,7 +163,6 @@ function newRoom() {
             }).catch(
                 // Log the rejection reason (Room is invalid')
                 function (reason) {
-                    console.log(reason);
                     //displayAlert(reason);
                 });
     }).catch(
@@ -130,8 +178,6 @@ function newRoom() {
 }
 
 function setInnerContent(url, id = '', resolve = console.log, reject = console.log) {
-    // Storing the token
-    localStorage.setItem('jwtToken', 'your_jwt_token_here');
 
     // Retrieving the token
     const token = localStorage.getItem('jwtToken');

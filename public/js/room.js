@@ -1,18 +1,56 @@
+function loginUserRequest(username, password, resolve = console.log, reject = console.log) {
+    console.log("logging in", username);
+    $.ajax({
+        url: '/auth',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ username: username, password: password }),
+        success: function (data, textStatus, xhr) {
+            try {
+                // Check if the response is a valid JSON
+                if (typeof data === 'object' && data !== null && data.status) {
+                    resolve(data);
+                } else {
+                    // Log the entire response for debugging
+                    console.log("Invalid response:", data);
+
+                    // Reject with an appropriate message
+                    reject("Invalid response for login request");
+                }
+            } catch (error) {
+                console.error("Error processing the response:", error);
+
+                // Reject with an appropriate message
+                reject("Error processing the response for login request");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log("INI XHR", xhr);
+            console.log("Status:", status);
+            console.log("Error:", error);
+            reject("Could not log in " + username);
+        }
+    });
+}
+
+
 // REST API calls
 // POST /chats
 function createRoom(title, description, visibility, password, resolve=console.log, reject=console.log) {
     console.log("creating room " + title);
    $.post('/chats', JSON.stringify({ title: title, description: description, visibility: visibility, password: password }), "json")
        .done(function (data) {
-           if (!data.hasOwnProperty('error')) {
+           if (data.status) {
                console.log("successfully created room!")
                resolve(data)
            }
            else {
+                console.log(data)
                reject("Could not create room " + title)
            }
        })
        .fail(function (xhr) {
+            console.log(xhr)
            reject("Could not create room " + title)
        });
 }

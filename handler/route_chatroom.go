@@ -76,10 +76,13 @@ func handlePost(w http.ResponseWriter, r *http.Request, ctxId string) (err error
 		Warning("error creating chatroom:", err.Error())
 		return err
 	}
-	// if err = data.CS.Add(&cr); err != nil {
-	// 	Warning("error encountered adding chat room:", err.Error())
-	// 	return err
-	// }
+	crs := &data.ChatRoom{
+		ChatRoomDB: cr,
+	}
+	if err = data.CS.PushCR(crs); err != nil {
+		Warning("error encountered adding chat room:", err.Error())
+		return err
+	}
 	// Retrieve updated object
 	// createdChatRoom, err := data.CS.Retrieve(cr.Title)
 	if err != nil {
