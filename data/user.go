@@ -7,7 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/elizraa/Globes/config"
 	"github.com/gorilla/websocket"
+	"golang.org/x/crypto/bcrypt"
 )
 
 const (
@@ -32,6 +34,29 @@ type Client struct {
 	Send chan []byte `json:"-"`
 	// ChatRoom that client is registered with
 	Room *ChatRoom `json:"-"`
+}
+
+// Database model
+type UserDB struct {
+	Username     string    `json:"username" gorm:"unique;not null"`
+	Color        string    `json:"color"`
+	LastActivity time.Time `json:"last_activity"`
+	Password     string    `json:"password,omitempty"`
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
+}
+
+func GetUserByUsername(username string) (*UserDB, error) {
+	var user UserDB
+	if err := config.DB.Where(&UserDB{Username: username}).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (us UserDB) MatchesPassword(val string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(us.Password), []byte(val))
+	return err == nil
 }
 
 // ReadPump pumps messages from the websocket connection to the broker.
@@ -61,7 +86,6 @@ func (c *Client) ReadPump() {
 				res, _ := json.Marshal(&ChatEvent{User: c.Username, Msg: fmt.Sprintf("%s has left the room.", c.Username), Color: c.Color})
 				c.Room.Broker.Notification <- res
 			}*/
-			log.Printf("errorrrrrrrrrrrrssssssssss: %v", err)
 			c.unsubscribe(&ChatEvent{User: c.Username, Color: c.Color})
 			break
 		}

@@ -123,7 +123,8 @@ var chat = function () {
             var message = json.msg;
             var usr = json.name;
             var color = json.color;
-            pushBalon(message, usr, new Date().toLocaleTimeString(), color); // TODO: Use the actual time?
+            var verified = json.verified;
+            pushBalon(message, usr, new Date().toLocaleTimeString(), color, verified); // TODO: Use the actual time?
         };
 
         // Server connection closed
@@ -182,9 +183,9 @@ function appendLog(item) {
 }
 
 // Populate chat box
-function pushBalon(message, user, time, col = "", direction = "") {
+function pushBalon(message, user, time, col = "", direction = "", verified=false) {
     var item = document.createElement("div");
-    item.setAttribute("data-is", user + " - " + time); // TODO
+    item.setAttribute("data-is", user + " - " + time + (verified ? " \u2605" : ""));
     var text = document.createElement("a");
 
     if (user == username || direction == "right") {
@@ -203,6 +204,7 @@ function pushBalon(message, user, time, col = "", direction = "") {
     if (col != "") {
         text = applyColor(text, col);
     }
+
     // Make it a child
     item.appendChild(text);
     appendLog(item);

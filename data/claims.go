@@ -39,6 +39,33 @@ func EncodeJWT(c *ChatEvent, cr *ChatRoomDB, secretKey string) (tokenString stri
 	return
 }
 
+type UserClaims struct {
+	Username string `json:"username"`
+	Color    string `json:"color"`
+	jwt.StandardClaims
+}
+
+// EncodeJWT will generate a jwt token based
+func EncodeUserJWT(user *UserDB, secretKey string) (tokenString string, err error) {
+	// Declare the expiration time of the token
+	expirationTime := time.Now().Add(time.Duration(expirationConstantMinutes) * time.Minute)
+	// Create the JWT claims, which includes the username and expiry time
+	claims := &UserClaims{
+		Username: user.Username,
+		Color:    user.Color,
+		StandardClaims: jwt.StandardClaims{
+			// In JWT, the expiry time is expressed as unix milliseconds
+			ExpiresAt: expirationTime.Unix(),
+		},
+	}
+	// Declare the token with the algorithm used for signing, and the claims
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	jwtKey := []byte(secretKey)
+	// Create the JWT string
+	tokenString, err = token.SignedString(jwtKey)
+	return
+}
+
 // ParseJWT parses a JWT and stores Claims object in c
 func ParseJWT(tokenString string, c *Claims, secretKey string) (err error) {
 	// Parse the JWT string and store the result in `claims`.

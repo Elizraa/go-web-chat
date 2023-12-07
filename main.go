@@ -37,6 +37,7 @@ func main() {
 	config.InitDB(os.Getenv("DB_DRIVER"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_PORT"), os.Getenv("DB_HOST"), os.Getenv("DB_NAME"))
 	// Migrate the schema
 	config.DB.AutoMigrate(&data.ChatRoomDB{}) // Assuming ChatRoomDB is your database model
+	config.DB.AutoMigrate(&data.UserDB{})
 
 	config.ConnectMongoDatabase()
 

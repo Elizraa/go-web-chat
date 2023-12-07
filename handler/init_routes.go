@@ -38,6 +38,7 @@ func registerHandlers() *mux.Router {
 
 	RegisterChatsAPI(api)
 	RegisterChatsHTML(api)
+	RegisterUsersAPI(api)
 
 	// Chat Sessions (WebSocket)
 	// Do not authorize since you can't add headers to WebSockets. We will do authorization when actually receiving chat messages
@@ -62,6 +63,10 @@ func RegisterChatsAPI(api *mux.Router) {
 	// Check password matches room
 	api.Handle("/chats/{ID}/token/renew", errHandler(renewToken)).Methods(http.MethodGet)
 
+}
+
+func RegisterUsersAPI(api *mux.Router) {
+	api.Handle("/auth", errHandler(user_login)).Methods(http.MethodPost)
 }
 
 func RegisterChatsHTML(api *mux.Router) {

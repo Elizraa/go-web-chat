@@ -130,6 +130,11 @@ function newRoom() {
 }
 
 function setInnerContent(url, id = '', resolve = console.log, reject = console.log) {
+    // Storing the token
+    localStorage.setItem('jwtToken', 'your_jwt_token_here');
+
+    // Retrieving the token
+    const token = localStorage.getItem('jwtToken');
     $.get(url + id)
         .done(function (data) {
             if (!data.hasOwnProperty('error')) {
