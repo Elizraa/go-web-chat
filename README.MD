@@ -1,17 +1,12 @@
-# ChitChat
-![Go](https://github.com/elizraa/chitchat/workflows/Go/badge.svg?branch=master)
-[![Go Report Card](https://goreportcard.com/badge/github.com/elizraa/chitchat)](https://goreportcard.com/report/github.com/elizraa/chitchat)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/elizraa/chitchat/blob/master/LICENSE)
-[![codecov](https://codecov.io/gh/DavidSchott/chitchat/branch/master/graph/badge.svg?token=G6AOS5QVHR)](https://codecov.io/gh/DavidSchott/chitchat)
+# Globes
+Reference https://github.com/DavidSchott/chitchat
 
-ChitChat is a simple chat app with basic features such as private rooms, authorization, and real-time messaging. 
-
-A live version of the current master branch is deployed to [daschott-chitchat.herokuapp.com](https://daschott-chitchat.herokuapp.com).
+<!-- A live version of the current master branch is deployed to [daschott-Globes.herokuapp.com](https://daschott-Globes.herokuapp.com). -->
 
 ## Install ##
 All that you need is [Golang](https://golang.org/). Once you run the application, it will expose a [target port](./config.json) on the host.
 ```
-20:5:13 app         | ChitChat 0.4 started at 127.0.0.1:443
+20:5:13 app         | Globes 0.4 started at 127.0.0.1:443
 ```
 
 ## Configuration ##
@@ -106,14 +101,3 @@ Chatting is implemented using WebSockets through the `chats/<room_id>/ws` endpoi
 It is recommended to send a `join` event broadcast when joining chat rooms so everyone else is notified. The server will send a "leave" event upon disconnect
 
   4. Send a HTTP GET to `/chats/<room_id>/token/renew` to renew the authorization token before expiration.
-
-
-  ## TODO ##
-  1. Need to add more unit tests for chatting 
-      * Also need to add test mocks once DB is setup for decoupled testing from model/data layer. Will likely inject dependencies in top-down fashion.
-  2. Authorization token handling on client-side website frontend could be improved with retries
-      * Send requests to refresh token shortly before expiration (e.g. n-5 minutes? What's a good tolerance?)
-      * Hide password field showing the salted hash from public-facing API response?
-  3. Generate proper UUIDs instead of integers as IDs?
-  4. Need to store chat server data models in a DB, right now everything is stored in memory to allow for rapid development and testing
-  5. Switch to a proper logging library such as logrus

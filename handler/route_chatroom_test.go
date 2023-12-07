@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/elizraa/chitchat/data"
+	"github.com/elizraa/Globes/data"
 	"github.com/gorilla/mux"
 )
 

@@ -1,4 +1,4 @@
-module github.com/elizraa/chitchat
+module github.com/elizraa/Globes
 
 go 1.15
 

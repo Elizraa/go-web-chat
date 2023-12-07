@@ -1,23 +1,30 @@
 {{ define "content" }}
-<h2><i class="fas fa-comment-dots"></i> ChitChat</h2>
-<p>ChitChat is a simple chat application that helps you connect with other people around the world.</p> 
-<p>ChitChat is a fun side project of mine with basic features such as real-time messaging, chat rooms, authentication, and more coming soon :)</p>
+<body>
 
-<div class="line"></div>
-
-<h4><i class="fas fa-handshake"></i> Meet new people! </h4>
-<p> Search and select a chat room to join without any lengthy sign-up forms that ask for your personal information.</p>
-
-<div class="line"></div>
-
-<h4><i class="fas fa-dungeon"></i> Create your own chat rooms!</h4>
-<p>Can't find an interesting chat room? Just create your own! Enhance and tailor chat rooms to your needs by setting passwords, descriptions, and customizing visibility.</p>
-
-<div class="line"></div>
-
-<h4> <i class="fas fa-lock"></i> Chat securely with confidence!</h4>
-<p>In addition to standard TLS encryption, private and secret chat rooms require a password to enter. Access will be authorized using <a href="https://jwt.io/">JSON web tokens</a>.</p>
-<div class="line"></div>
-<h4> <i class="fas fa-code-branch"></i> Source Code</h4>
-<p>Please see full source code on <a href="https://github.com/elizraa/chitchat">GitHub <i class="fab fa-github"></i> </a> </p>
+    <header>
+        <h1>Chat Web App</h1>
+        <p>Your go-to platform for seamless communication</p>
+    </header>
+    
+    <section class="tech-stack">
+        <h2>Tech Stack</h2>
+        <ul>
+            <li><i class="fab fa-js"></i> JavaScript</li>
+            <!-- <li><i class="fa-brands fa-golang"></i> Golang</li> -->
+            <li><i class="fas fa-code"></i> Golang</li>
+            <li><i class="fas fa-database"></i> MongoDB</li>
+            <li><i class="fas fa-database"></i> PostgreSQL</li>
+            <!-- Add more technologies as needed -->
+        </ul>
+    </section>
+    
+    <section class="cta">
+        <p>Try it now :D</p>
+        
+        <a a href="#" onclick="setInnerContent('/chats');" id="join-chats-btn" class="button">Join a chatroom</a>
+    </section>
+    <div class="line"></div>
+    <h4> <i class="fas fa-code-branch"></i> Source Code</h4>
+    <p><a href="https://github.com/elizraa/go-web-chat">Source code on GitHub <i class="fab fa-github"></i> </a> </p>
+</body>
 {{ end }}

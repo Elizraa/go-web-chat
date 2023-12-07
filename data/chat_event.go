@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/elizraa/chitchat/config"
+	"github.com/elizraa/Globes/config"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -73,7 +73,7 @@ func FetchChatEvents(roomID int) ([]ChatEvent, error) {
 	chatEventCollection := config.MongoDBClient.Database("chat_server").Collection("chat_events")
 	filter := bson.D{{Key: "roomid", Value: roomID}}
 
-	options := options.Find().SetSort(bson.D{{Key: "time", Value: 1}})
+	options := options.Find().SetSort(bson.D{{Key: "time", Value: 1}}).SetLimit(50)
 	cursor, err := chatEventCollection.Find(context.TODO(), filter, options)
 	if err != nil {
 		log.Println("Error fetching chat events:", err)

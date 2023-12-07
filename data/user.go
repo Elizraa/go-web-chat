@@ -85,7 +85,6 @@ func (c *Client) ReadPump() {
 				c.unsubscribe(&ce)
 			case Subscribe:
 				// LastActivity will be populated in subscribe
-				ln("testttttttttttttttt")
 				c.subscribe(&ce)
 			case Broadcast:
 				// Populate activity

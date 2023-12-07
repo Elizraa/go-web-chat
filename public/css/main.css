@@ -1,0 +1,116 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+header {
+    background-color: #ffffff;
+    color: #000000;
+    text-align: center;
+    padding: 50px;
+}
+
+header h1 {
+    font-size: 2.5em;
+}
+
+header p {
+    font-size: 1.2em;
+}
+
+.tech-stack {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    background-color: #c4f4ff;
+    padding: 30px;
+}
+
+.tech-stack h2 {
+    font-size: 2em;
+    text-align: center;
+    width: 100%;
+}
+
+.tech-stack ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.tech-stack li {
+    margin: 10px;
+    font-size: 1.2em;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Unique background colors for each tech stack item */
+.tech-stack li:nth-child(1) {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.tech-stack li:nth-child(2) {
+    background-color: #2ecc71;
+    color: #fff;
+}
+
+.tech-stack li:nth-child(3) {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.tech-stack li:nth-child(4) {
+    background-color: #f39c12;
+    color: #fff;
+}
+
+.tech-stack li:nth-child(5) {
+    background-color: #9b59b6;
+    color: #fff;
+}
+
+.tech-stack li:nth-child(6) {
+    background-color: #34495e;
+    color: #fff;
+}
+
+.tech-stack li:nth-child(7) {
+    background-color: #16a085;
+    color: #fff;
+}
+
+/* Add more styles and unique colors as needed */
+
+.cta {
+    background-color: #cfffe3;
+    color: #fff;
+    text-align: center;
+    padding: 50px;
+}
+
+.cta p {
+    font-size: 1.5em;
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    text-decoration: none;
+    background-color: #58ff9d;
+    color: #000000;
+    border-radius: 5px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.button:hover {
+    background-color: #27ae60;
+}

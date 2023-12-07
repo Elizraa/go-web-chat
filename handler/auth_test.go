@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/elizraa/chitchat/data"
+	"github.com/elizraa/Globes/data"
 )
 
 func TestLogin(t *testing.T) {

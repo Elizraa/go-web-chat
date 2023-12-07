@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"runtime"
 
-	"github.com/elizraa/chitchat/data"
+	"github.com/elizraa/Globes/data"
 )
 
 var logger *log.Logger

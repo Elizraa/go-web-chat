@@ -1,6 +1,0 @@
-{
-    "watch": ["*.go"],
-    "ext": ".go",
-    "exec": "reset.bat"
-  }
-  

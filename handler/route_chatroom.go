@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/elizraa/chitchat/data"
+	"github.com/elizraa/Globes/data"
 	"github.com/gorilla/mux"
 )
 

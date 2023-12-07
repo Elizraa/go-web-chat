@@ -11,7 +11,7 @@ import (
 
 	"github.com/gorilla/websocket"
 
-	"github.com/elizraa/chitchat/data"
+	"github.com/elizraa/Globes/data"
 )
 
 const WSHandshakeTimeOut = 45 * time.Second

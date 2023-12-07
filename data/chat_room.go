@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/elizraa/chitchat/config"
+	"github.com/elizraa/Globes/config"
 	"golang.org/x/crypto/bcrypt"
 )
 

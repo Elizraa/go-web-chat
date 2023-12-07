@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/elizraa/chitchat/data"
+	"github.com/elizraa/Globes/data"
 	"github.com/gorilla/mux"
 )
 

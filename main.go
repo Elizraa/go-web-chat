@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/elizraa/chitchat/config"
-	"github.com/elizraa/chitchat/data"
-	"github.com/elizraa/chitchat/handler"
+	"github.com/elizraa/Globes/config"
+	"github.com/elizraa/Globes/data"
+	"github.com/elizraa/Globes/handler"
 	"github.com/joho/godotenv"
 )
 
@@ -48,7 +48,7 @@ func main() {
 		WriteTimeout:   time.Duration(handler.Config.WriteTimeout * int64(time.Second)),
 		MaxHeaderBytes: 1 << 20,
 	}
-	fmt.Println("ChitChat", version(), "started at", server.Addr)
+	fmt.Println("Globes", version(), "started at", server.Addr)
 	if _, exist := os.LookupEnv("PORT"); exist {
 		// TLS is already enabled on Heroku PaaS platform
 		if err := server.ListenAndServe(); err != nil {

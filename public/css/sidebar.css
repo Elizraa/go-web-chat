@@ -14,7 +14,7 @@ p {
     font-size: 1.1em;
     font-weight: 300;
     line-height: 1.7em;
-    color: #999;
+    color: #000000;
 }
 
 a, a:hover, a:focus {
@@ -72,8 +72,19 @@ a, a:hover, a:focus {
 }
 
 #sidebar .sidebar-header {
+    max-width: 100%; /* Adjust the max-width as needed */
+    overflow-x: hidden; /* Hide horizontal overflow */
     padding: 20px;
     background: #6d7fcc;
+    /* You can add more styles as needed */
+}
+
+/* Media query for smaller screens */
+@media only screen and (max-width: 768px) {
+    .sidebar-header {
+        max-width: none; /* Remove max-width on smaller screens */
+        overflow-x: auto; /* Add a scrollbar if content overflows horizontally */
+    }
 }
 
 #sidebar ul.components {

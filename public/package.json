@@ -1,5 +1,5 @@
 {
-  "name": "chitchat",
+  "name": "Globes",
   "version": "0.2.0",
   "description": "real-time chat application",
   "main": "js/index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/elizraa/chitchat.git"
+    "url": "https://github.com/elizraa/Globes.git"
   },
   "author": "David Schott",
   "license": "MIT",

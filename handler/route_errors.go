@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/elizraa/chitchat/data"
+	"github.com/elizraa/Globes/data"
 	"github.com/google/uuid"
 )
 
