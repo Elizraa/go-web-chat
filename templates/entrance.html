@@ -1,4 +1,64 @@
 {{ define "content" }}
+<script>
+    // Extracted the isPasswordNeeded information from the server-side
+    
+    
+    function initializeForm() {
+        // Check if localStorage values exist
+        const storedUsername = localStorage.getItem('username');
+        const storedColor = localStorage.getItem('color').toLocaleLowerCase();
+        
+        var password = document.getElementById("inputPassword");
+        var isPasswordNeeded = true;
+        if (window.getComputedStyle(password).visibility === "hidden") {
+            isPasswordNeeded = false;
+        }
+
+        // Set username and color if stored values exist
+        if (storedUsername && storedColor) {
+            document.getElementById('input-user').value = storedUsername;
+            document.getElementById('color-select').value = storedColor;
+            updateTemplateStyle(storedUsername, storedColor);
+
+            // If password is not needed, call validateChatEntrance directly
+            if (!isPasswordNeeded) {
+                extractAndValidateChatEntrance();
+            }
+
+            // If password is needed, disable changing username and color
+            if (isPasswordNeeded) {
+                document.getElementById('input-user').readOnly = true;
+                document.getElementById('color-select').disabled = true;
+            }
+        }
+    }
+
+    // Call initializeForm when the page is loaded
+    document.addEventListener('DOMContentLoaded', initializeForm);
+
+    function extractAndValidateChatEntrance() {
+        // Get the current URL
+        var currentUrl = window.location.href;
+
+        // Use a regular expression to extract the ID from the URL
+        var match = currentUrl.match(/\/chats\/(\d+)\/entrance/);
+
+        // Check if a match is found
+        if (match && match[1]) {
+            // Extracted ID
+            var chatId = match[1];
+
+            // Call the validateChatEntrance function with the extracted ID
+            validateChatEntrance(chatId);
+        } else {
+            // Handle the case where the URL doesn't match the expected pattern
+            console.error("Invalid URL format for chat entrance");
+        }
+    }
+
+
+    // Rest of your JavaScript code...
+</script>
 <div class="text-center" id="signup">
     <form class="form-signin" novalidate>
         <h1><i class="fas fa-comment-dots"></i>
@@ -76,7 +136,7 @@
                 </div>
             </div>
         </div>
-        <button class="btn btn-lg btn-primary btn-block" type="button" onclick="validateChatEntrance();">Enter chat</button>
+        <button class="btn btn-lg btn-primary btn-block" type="button" onclick="extractAndValidateChatEntrance();">Enter chat</button>
         <p class="mt-5 mb-3 text-muted">&copy; 2023</p>
     </form>
 </div>

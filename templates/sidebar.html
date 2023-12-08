@@ -84,6 +84,27 @@
             profileCircle.appendChild(usernameText);
             profileContainer.appendChild(profileCircle);
 
+                        // Add a logout button below the profile
+                        const logoutButton = document.createElement("a");
+            logoutButton.href = "#";
+            logoutButton.classList.add("logout-btn");
+            const logoutIcon = document.createElement("i");
+            logoutIcon.classList.add("fas", "fa-sign-out-alt");
+            const logoutText = document.createTextNode("Logout");
+            logoutButton.appendChild(logoutIcon);
+            logoutButton.appendChild(logoutText);
+
+            // Append the logout button
+            profileContainer.appendChild(logoutButton);
+
+            // Add an event listener to the logout button
+            logoutButton.addEventListener('click', function () {
+                // Clear all localStorage items
+                localStorage.clear();
+                // You can also redirect the user or perform other actions as needed
+                window.location.reload();
+            });
+
             // Replace the existing login button with the profile
             const loginButton = document.querySelector('.login-btn');
             loginButton.replaceWith(profileContainer);

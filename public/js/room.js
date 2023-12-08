@@ -25,7 +25,6 @@ function loginUserRequest(username, password, resolve = console.log, reject = co
             }
         },
         error: function (xhr, status, error) {
-            console.log("INI XHR", xhr);
             console.log("Status:", status);
             console.log("Error:", error);
             reject("Could not log in " + username);

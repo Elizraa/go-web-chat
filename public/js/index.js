@@ -31,8 +31,6 @@ function loginUser() {
             loginUserRequest(username, password, resolve, reject);
         });
     }).then(function (response) {
-        console.log("LOGINNN", response)
-
         // Login successful, store data and redirect
         localStorage.setItem("username", response.name);
         localStorage.setItem("color", response.color);
@@ -43,7 +41,6 @@ function loginUser() {
         // window.location.href = "/dashboard"; // Redirect to the dashboard or .any other page
    }).catch(function (error) {
         // Handle errors
-        console.log("error_coy", error);
         displayAlert(error);
     });
 }

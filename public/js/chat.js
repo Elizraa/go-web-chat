@@ -81,13 +81,8 @@ var chat = function () {
                 // Assuming the API returns an array of messages in the 'data' property
                 data.data.forEach(message => {
                     if (message.event_type === "join" || message.event_type === "send") {
-                        pushBalon(message.msg, message.name, new Date(message.time).toLocaleTimeString(), message.color);
+                        pushBalon(message.msg, message.name, new Date(message.time).toLocaleTimeString(), message.color, "", message.verified);
                     }
-                });
-
-                // Assuming the API returns an array of messages
-                data.forEach(message => {
-                    pushBalon(message.msg, message.name, new Date(message.timestamp).toLocaleTimeString(), message.color);
                 });
             } else {
                 console.error('API returned an error:', data.error);
@@ -124,7 +119,7 @@ var chat = function () {
             var usr = json.name;
             var color = json.color;
             var verified = json.verified;
-            pushBalon(message, usr, new Date().toLocaleTimeString(), color, verified); // TODO: Use the actual time?
+            pushBalon(message, usr, new Date().toLocaleTimeString(), color, "", verified); // TODO: Use the actual time?
         };
 
         // Server connection closed
@@ -152,7 +147,9 @@ var chat = function () {
     }
     // Send notification to server
     function sendClientEvent(action, user, room, message = "", col = "") {
-        var evt = JSON.stringify({ event_type: action, name: user, room_id: parseInt(room), color: col, msg: message })
+        var verified = localStorage.getItem("token") !== null;
+        var evt = JSON.stringify({ event_type: action, name: user, room_id: parseInt(room), color: col, msg: message ,
+                                verified: verified})
         conn.send(evt);
     }
     // Close WebSocket Connection
@@ -253,6 +250,9 @@ function applyColor(elem, color) {
 
 function popBalon() {
     balon = document.getElementsByClassName("balon1");
+    if (log === undefined) {
+        log = document.getElementById("chat-box");
+    }
     log.removeChild(balon[0]);
 }
 
@@ -348,7 +348,7 @@ function storeToken(token) {
     }
 }
 
-function validateChatEntrance() {
+function validateChatEntrance(ID) {
     // Read in form
     var form = document.getElementsByClassName("form-signin")[0];
     var userDOM = document.getElementById("input-user");

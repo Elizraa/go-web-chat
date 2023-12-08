@@ -29,6 +29,7 @@ type ChatEvent struct {
 	Color     string    `json:"color,omitempty"`
 	Msg       string    `json:"msg,omitempty"`
 	Password  string    `json:"secret,omitempty"`
+	Verified  bool      `json:"verified,omitempty"`
 	Timestamp time.Time `json:"time,omitempty"`
 }
 
@@ -50,7 +51,6 @@ func ValidateEvent(data []byte) (ChatEvent, error) {
 
 // InsertChatEvent inserts a ChatEvent into MongoDB
 func InsertChatEvent(event ChatEvent) error {
-	return nil
 	chatEventCollection := config.MongoDBClient.Database("chat_server").Collection("chat_events")
 
 	// Set timestamp if it is not already set

@@ -28,6 +28,7 @@ type Client struct {
 	Username     string    `json:"username"`
 	Color        string    `json:"color"`
 	LastActivity time.Time `json:"last_activity"`
+	Verified     bool      `json:"verified"`
 	// The websocket Connection.
 	Conn *websocket.Conn `json:"-"`
 	// Buffered channel of outbound messages.
@@ -209,7 +210,7 @@ func (c *Client) subscribe(evt *ChatEvent) {
 	log.Println("Adding client to Chatroom: ", evt.User)
 	evt.EventType = Subscribe
 	evt.Msg = fmt.Sprintf("%s entered the room.", evt.User)
-	InsertChatEvent(*evt)
+	// InsertChatEvent(*evt)
 	go func() {
 		time.Sleep(200 * time.Millisecond)
 		c.Room.Broker.Notification <- formatEventData(evt)
