@@ -60,11 +60,9 @@ func InsertChatEvent(event ChatEvent) error {
 
 	_, err := chatEventCollection.InsertOne(context.TODO(), event)
 	if err != nil {
-		log.Println("Error inserting chat event:", err)
 		return err
 	}
 
-	log.Println("Chat event inserted successfully.")
 	return nil
 }
 
