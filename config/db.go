@@ -13,8 +13,17 @@ import (
 var DB *gorm.DB
 
 func InitDB(Dbdriver, DbUser, DbPassword, DbPort, DbHost, DbName string) {
-	// Open a database connection
-	DBURL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", DbUser, DbPassword, DbHost, DbPort, DbName)
+	var DBURL string
+	switch Dbdriver {
+	case "mysql":
+		DBURL = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", DbUser, DbPassword, DbHost, DbPort, DbName)
+	case "postgres":
+		DBURL = fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable", DbHost, DbPort, DbUser, DbName, DbPassword)
+	default:
+		log.Fatal("Invalid database driver")
+		return
+	}
+
 	db, err := gorm.Open(Dbdriver, DBURL)
 	if err != nil {
 		fmt.Printf("Cannot connect to %s database\n", Dbdriver)
