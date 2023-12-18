@@ -5,7 +5,7 @@ A live version of the current master branch is deployed to [54.169.251.97](http:
 But curently is limited by aws free tier package, only the endoint API still working (for now).
 
 ## Documentation ##
-[postman] https://documenter.getpostman.com/view/15592249/2s9YJaXiUx
+[postman](https://documenter.getpostman.com/view/15592249/2s9YJaXiUx)
 
 ## Install ##
 All that you need is [Golang](https://golang.org/). Once you run the application, it will expose a [target port](./config.json) on the host.
