@@ -1,16 +1,25 @@
 # Globes
 Reference https://github.com/DavidSchott/chitchat
 
-<!-- A live version of the current master branch is deployed to [daschott-Globes.herokuapp.com](https://daschott-Globes.herokuapp.com). -->
+A live version of the current master branch is deployed to [54.169.251.97](http://54.169.251.97).
+But curently is limited by aws free tier package, only the endoint API still working (for now).
+
+## Documentation ##
+[postman] https://documenter.getpostman.com/view/15592249/2s9YJaXiUx
 
 ## Install ##
 All that you need is [Golang](https://golang.org/). Once you run the application, it will expose a [target port](./config.json) on the host.
+
 ```
 20:5:13 app         | Globes 0.4 started at 127.0.0.1:443
 ```
 
 ## Configuration ##
 Edit [config.json](./config.json) to configure HTTP server settings.
+Add [.env](./env.loval) file to configure mongodb data.
+
+
+
 
 ## ChatRoom API ##
 Send HTTP requests to `/chats`:
